@@ -595,7 +595,6 @@
                     <img src="./img/logo-obpc.png" alt="">
                 </div>
                 <div class="header-top-line"></div>
-                <!-- Torna a área de informações do usuário clicável -->
                 <div class="user-info-area" id="header-user-section">
                     <div class="user-info-left">
                         <div class="perfil-image">
@@ -647,17 +646,14 @@
                     </section>
                 </div>
                 
-                <!-- Nova tela de perfil do usuário -->
                 <div id="profile-screen" class="app-screen hidden-screen">
                     <section class="profile-screen-container">
                         <h2>Meu Perfil</h2>
                         <form id="profile-form" class="profile-form">
-                            <!-- Seção para a foto de perfil -->
                             <div class="profile-image-upload">
                                 <img id="profile-preview-img" src="https://placehold.co/100x100/E25402/FFFFFF" alt="Pré-visualização do perfil">
                                 <input type="file" id="profileImage" accept="image/*">
                             </div>
-                            <!-- Campos do formulário -->
                             <div class="form-group">
                                 <label for="firstName">Nome:</label>
                                 <input type="text" id="firstName" name="firstName">
@@ -818,7 +814,7 @@
     // Variáveis de estado
     let db, auth, storage, userId;
     let isFirebaseInitialized = false;
-    let appId;
+    let appId = "default-app-id"; // CORRIGIDO: Usa o ID do aplicativo de forma explícita
 
     /**
      * Gerencia a exibição das telas da aplicação.
@@ -1219,7 +1215,7 @@
     const fetchAndRenderAulas = (appId) => {
         if (!db) return;
 
-        const collectionPath = `artifacts/${appId}/public/data/aulas`;
+        const collectionPath = `artifacts/${appId}/public/data/videos`;
         const aulasRef = collection(db, collectionPath);
         const q = query(aulasRef);
 
@@ -1238,7 +1234,7 @@
     const fetchAndRenderMaterialApoio = (appId) => {
         if (!db) return;
         
-        const collectionPath = `artifacts/${appId}/public/data/images`;
+        const collectionPath = `artifacts/${appId}/public/data/materialApoio`;
         const materialRef = collection(db, collectionPath);
         const q = query(materialRef);
 
@@ -1279,6 +1275,7 @@
 
         try {
             let firebaseConfig;
+            let explicitAppId = "default-app-id"; // ID do aplicativo extraído do seu dashboard.html
 
             if (typeof __firebase_config !== 'undefined' && typeof __app_id !== 'undefined') {
                 firebaseConfig = JSON.parse(__firebase_config);
@@ -1293,7 +1290,7 @@
                     appId: "1:690083146419:web:c03301f1aca7dd2d299ec6",
                     measurementId: "G-KJPSSSC575"
                 };
-                appId = "default-app-id";
+                appId = explicitAppId; // CORRIGIDO: Usa o ID do aplicativo de forma explícita
             }
             
             const app = initializeApp(firebaseConfig);
@@ -1310,7 +1307,7 @@
                     // Crie uma Promise para carregar o primeiro conjunto de dados
                     // Quando a primeira coleção for carregada, a tela principal é exibida
                     const loadInitialData = new Promise((resolve, reject) => {
-                        const collectionPath = `artifacts/${appId}/public/data/aulas`;
+                        const collectionPath = `artifacts/${appId}/public/data/videos`;
                         const aulasRef = collection(db, collectionPath);
                         const q = query(aulasRef);
 
