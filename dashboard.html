@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+        <meta name="color-scheme" content="light dark">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+        <title>OBPC School - Dashboard Admin</title>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Anton&family=Boldonse&family=Funnel+Sans:ital,wght@0,300..800;1,300..800&family=Manrope:wght@200..800;1,200..800&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Unbounded:wght@200..900&display=swap');
+
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                background-color: black;
+                color: white;
+                font-family: "Funnel Sans", sans-serif;
+                font-size: 1rem;
+            }
+            
+            /* -- Estilos da Tela de Login -- */
+            .auth-container {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+                background-color: black;
+                color: white;
+                padding: 20px;
+            }
+            .auth-card {
+                background-color: #06224A;
+                padding: 30px;
+                border-radius: 15px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+                width: 100%;
+                max-width: 400px;
+                color: #eee;
+                text-align: center;
+            }
+            .auth-card h2 {
+                color: #E25402;
+                font-size: 2rem;
+                margin-bottom: 20px;
+            }
+            .form-group {
+                margin-bottom: 20px;
+                text-align: left;
+            }
+            .form-group label {
+                display: block;
+                margin-bottom: 8px;
+                font-weight: 500;
+            }
+            .form-group input, .form-group textarea {
+                width: 100%;
+                padding: 12px;
+                border-radius: 8px;
+                border: 1px solid #E25402;
+                background-color: #333;
+                color: white;
+                font-size: 1rem;
+            }
+            .auth-button {
+                width: 100%;
+                padding: 12px;
+                border-radius: 8px;
+                background-color: #E25402;
+                color: white;
+                font-weight: bold;
+                border: none;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+                margin-top: 10px;
+            }
+            .auth-button:hover {
+                background-color: #d14a02;
+            }
+            .auth-message {
+                text-align: center;
+                margin-top: 10px;
+                font-size: 0.9rem;
+                color: #fca5a5;
+            }
+            .logo {
+                width: 250px;
+                height: auto;
+                margin-bottom: 20px;
+            }
+
+            /* -- Estilos do Layout Principal do Dashboard -- */
+            .dashboard-container {
+                display: flex;
+                min-height: 100vh;
+                flex-direction: column;
+            }
+
+            /* -- Estilos do Menu Lateral -- */
+            .sidebar {
+                width: 100%;
+                background-color: #06224A;
+                padding: 20px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                border-bottom: 1px solid #E25402;
+            }
+            .sidebar-logo {
+                width: 100%;
+                text-align: center;
+                margin-bottom: 30px;
+            }
+            .sidebar-logo img {
+                width: 150px;
+                height: auto;
+            }
+            .sidebar-menu {
+                list-style: none;
+                width: 100%;
+            }
+            .sidebar-menu li {
+                margin-bottom: 10px;
+            }
+            .sidebar-menu a {
+                display: flex;
+                align-items: center;
+                color: white;
+                text-decoration: none;
+                padding: 15px;
+                border-radius: 8px;
+                transition: background-color 0.3s ease;
+            }
+            .sidebar-menu a:hover {
+                background-color: #E25402;
+            }
+            .sidebar-menu a i {
+                margin-right: 10px;
+                color: #E25402;
+            }
+            .sidebar-menu a:hover i {
+                color: white;
+            }
+
+            /* -- Estilos da Área de Conteúdo Principal -- */
+            .main-content {
+                flex-grow: 1;
+                padding: 20px;
+            }
+            .content-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 30px;
+                border-bottom: 2px solid #333;
+                padding-bottom: 15px;
+            }
+            .content-header h1 {
+                font-size: 1.5rem;
+                color: #E25402;
+            }
+            .auth-button-header {
+                background-color: #E25402;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: bold;
+                transition: background-color 0.3s ease;
+            }
+            .auth-button-header:hover {
+                background-color: #d14a02;
+            }
+
+            /* -- Estilos do Formulário de Administração -- */
+            .admin-container {
+                padding: 20px;
+            }
+            .admin-card {
+                background-color: #06224A;
+                padding: 30px;
+                border-radius: 15px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+                width: 100%;
+                max-width: 600px;
+                color: #eee;
+                text-align: center;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .admin-card h2 {
+                color: #E25402;
+                font-size: 1.5rem;
+                margin-bottom: 20px;
+            }
+            .admin-button {
+                width: 100%;
+                padding: 12px;
+                border-radius: 8px;
+                background-color: #E25402;
+                color: white;
+                font-weight: bold;
+                border: none;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+                margin-top: 10px;
+            }
+            .admin-button:hover {
+                background-color: #d14a02;
+            }
+            .admin-message {
+                text-align: center;
+                margin-top: 10px;
+                font-size: 0.9rem;
+                color: #fca5a5;
+            }
+            #loading-message {
+                margin-top: 10px;
+                font-size: 0.9rem;
+                color: #E25402;
+                display: none;
+            }
+            #upload-loading-message {
+                margin-top: 10px;
+                font-size: 0.9rem;
+                color: #E25402;
+                display: none;
+            }
+            #reading-plan-loading-message {
+                margin-top: 10px;
+                font-size: 0.9rem;
+                color: #E25402;
+                display: none;
+            }
+
+            /* -- Estilos da Lista de Conteúdos -- */
+            .list-container {
+                margin-top: 40px;
+            }
+            .list-container h2 {
+                color: #E25402;
+                font-size: 1.5rem;
+                margin-bottom: 20px;
+            }
+            .content-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 20px;
+            }
+            .content-card {
+                background-color: #06224A;
+                border-radius: 15px;
+                overflow: hidden;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+                display: flex;
+                flex-direction: column;
+                transition: transform 0.3s ease;
+            }
+            .content-card:hover {
+                transform: translateY(-5px);
+            }
+            .content-card img {
+                width: 100%;
+                height: 180px;
+                object-fit: cover;
+            }
+            .content-card-content {
+                padding: 15px;
+                display: flex;
+                flex-direction: column;
+                flex-grow: 1;
+            }
+            .content-card-content h3 {
+                font-size: 1.2rem;
+                margin-bottom: 10px;
+            }
+            .content-card-content p {
+                font-size: 0.9rem;
+                color: #ddd;
+                flex-grow: 1;
+            }
+            .content-card-content .action-buttons {
+                display: flex;
+                gap: 10px;
+                margin-top: 15px;
+            }
+            .content-card-content a.button,
+            .content-card-content button.delete-button {
+                flex-grow: 1;
+                padding: 10px;
+                border-radius: 8px;
+                text-align: center;
+                transition: background-color 0.3s ease;
+                font-weight: bold;
+                border: none;
+                cursor: pointer;
+            }
+            .content-card-content a.button {
+                background-color: #E25402;
+                color: white;
+                text-decoration: none;
+            }
+            .content-card-content a.button:hover {
+                background-color: #d14a02;
+            }
+            .content-card-content button.delete-button {
+                background-color: #dc3545; /* Cor de exclusão */
+                color: white;
+            }
+            .content-card-content button.delete-button:hover {
+                background-color: #c82333;
+            }
+
+            /* Estilos para cards de eventos */
+            .event-card {
+                background-color: #06224A;
+                border-radius: 15px;
+                padding: 20px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+                text-align: left;
+            }
+            .event-card h3 {
+                color: #E25402;
+                margin-bottom: 10px;
+            }
+            .event-card p {
+                font-size: 1rem;
+                color: #ddd;
+            }
+            .event-card .action-buttons {
+                margin-top: 15px;
+            }
+            
+            /* Estilos para cards de pedidos de oração */
+            .prayer-request-card {
+                background-color: #06224A;
+                border-radius: 15px;
+                padding: 20px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+                margin-bottom: 15px;
+            }
+            .prayer-request-card h3 {
+                color: #E25402;
+                font-size: 1.2rem;
+                margin-bottom: 10px;
+            }
+            .prayer-request-card p {
+                font-size: 1rem;
+                color: #ddd;
+                line-height: 1.5;
+            }
+            .prayer-request-card .prayer-meta {
+                font-size: 0.8rem;
+                color: #aaa;
+                margin-top: 10px;
+                text-align: right;
+            }
+            .prayer-request-card .delete-prayer-button {
+                background-color: #dc3545;
+                color: white;
+                border: none;
+                padding: 8px 12px;
+                border-radius: 5px;
+                cursor: pointer;
+                font-weight: bold;
+                margin-top: 10px;
+                transition: background-color 0.3s ease;
+            }
+            .prayer-request-card .delete-prayer-button:hover {
+                background-color: #c82333;
+            }
+
+            /* Estilos para o plano de leitura */
+            .reading-plan-card {
+                background-color: #06224A;
+                border-radius: 15px;
+                padding: 20px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+                margin-bottom: 15px;
+                text-align: left;
+                width: 100%;
+                max-width: 600px;
+            }
+            .reading-plan-card h3 {
+                color: #E25402;
+                font-size: 1.2rem;
+                margin-bottom: 10px;
+            }
+            .reading-plan-card p {
+                font-size: 1rem;
+                color: #ddd;
+                line-height: 1.5;
+            }
+            .reading-plan-card .reading-meta {
+                font-size: 0.8rem;
+                color: #aaa;
+                margin-top: 10px;
+            }
+            .reading-plan-card .action-buttons {
+                display: flex;
+                gap: 10px;
+                margin-top: 15px;
+            }
+            .reading-plan-card .delete-reading-plan-button {
+                background-color: #dc3545;
+                color: white;
+                border: none;
+                padding: 8px 12px;
+                border-radius: 5px;
+                cursor: pointer;
+                font-weight: bold;
+                transition: background-color 0.3s ease;
+            }
+            .reading-plan-card .delete-reading-plan-button:hover {
+                background-color: #c82333;
+            }
+
+            /* -- Media Queries para Responsividade -- */
+            @media (min-width: 768px) {
+                .dashboard-container {
+                    flex-direction: row;
+                }
+                .sidebar {
+                    width: 250px;
+                    border-right: 1px solid #E25402;
+                    border-bottom: none;
+                }
+                .main-content {
+                    padding: 40px;
+                }
+            }
+            
+            /* -- Estilos do Modal de Confirmação -- */
+            .modal {
+                display: none;
+                position: fixed;
+                z-index: 100;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                overflow: auto;
+                background-color: rgba(0,0,0,0.7);
+                justify-content: center;
+                align-items: center;
+            }
+            .modal-content {
+                background-color: #06224A;
+                padding: 20px;
+                border-radius: 10px;
+                width: 90%;
+                max-width: 400px;
+                text-align: center;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            }
+            .modal-content p {
+                margin-bottom: 20px;
+                font-size: 1.1rem;
+            }
+            .modal-buttons {
+                display: flex;
+                justify-content: center;
+                gap: 15px;
+            }
+            .modal-button {
+                padding: 10px 20px;
+                border-radius: 8px;
+                border: none;
+                cursor: pointer;
+                font-weight: bold;
+                transition: background-color 0.3s ease;
+            }
+            .modal-button.confirm {
+                background-color: #dc3545;
+                color: white;
+            }
+            .modal-button.confirm:hover {
+                background-color: #c82333;
+            }
+            .modal-button.cancel {
+                background-color: #6c757d;
+                color: white;
+            }
+            .modal-button.cancel:hover {
+                background-color: #5a6268;
+            }
+
+        </style>
+    </head>
+    <body>
+
+        <div id="login-screen-admin" class="auth-container">
+            <div class="auth-card">
+                <img class="logo" alt="Obpc School Logo" src="https://placehold.co/250x50/06224A/E25402?text=OBPC|SCHOOL">
+                <h2>Login do Administrador</h2>
+                <form id="login-form-admin">
+                    <div class="form-group">
+                        <label for="email-admin">Email</label>
+                        <input type="email" id="email-admin" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password-admin">Senha</label>
+                        <input type="password" id="password-admin" name="password" required>
+                    </div>
+                    <button type="submit" class="auth-button">
+                        Entrar
+                    </button>
+                    <div id="login-message-admin" class="auth-message"></div>
+                </form>
+            </div>
+        </div>
+
+        <div id="main-screen-admin" class="dashboard-container" style="display: none;">
+            <div class="sidebar">
+                <div class="sidebar-logo">
+                    <img src="https://placehold.co/150x50/06224A/E25402?text=OBPC|SCHOOL" alt="OBPC School Logo">
+                </div>
+                <ul class="sidebar-menu">
+                    <li><a href="#" id="add-class-link"><i class="fa-solid fa-circle-plus"></i> Adicionar Aulas</a></li>
+                    <li><a href="#" id="manage-content-link"><i class="fa-solid fa-list-check"></i> Gerenciar Aulas</a></li>
+                    <li><a href="#" id="image-upload-link"><i class="fa-solid fa-image"></i> Upload de Imagem</a></li>
+                    <li><a href="#" id="manage-images-link"><i class="fa-solid fa-images"></i> Gerenciar Material de Apoio</a></li>
+                    <li><a href="#" id="add-oferta-link"><i class="fa-solid fa-hand-holding-dollar"></i> Adicionar Ofertas</a></li>
+                    <li><a href="#" id="manage-ofertas-link"><i class="fa-solid fa-hand-holding-hand"></i> Gerenciar Ofertas</a></li>
+                    <li><a href="#" id="add-event-link"><i class="fa-solid fa-calendar-days"></i> Gerenciar Eventos</a></li>
+                    <li><a href="#" id="add-reading-plan-link"><i class="fa-regular fa-calendar-check"></i> Adicionar Leitura</a></li>
+                    <li><a href="#" id="manage-reading-plans-link"><i class="fa-solid fa-book-open"></i> Gerenciar Leitura</a></li>
+                    <li><a href="#" id="manage-prayer-requests-link"><i class="fa-solid fa-hands-praying"></i> Pedidos de Oração</a></li>
+                    <li><a href="#" id="logout-button"><i class="fa-solid fa-right-from-bracket"></i> Sair</a></li>
+                </ul>
+            </div>
+
+            <div class="main-content">
+                <div class="content-header">
+                    <h1>Dashboard do Administrador</h1>
+                    <button id="logout-button-header" class="auth-button-header">Sair</button>
+                </div>
+
+                <div id="add-class-screen" class="admin-container" style="display: none;">
+                    <div class="admin-card">
+                        <h2>Adicionar Nova Aula</h2>
+                        <form id="admin-form">
+                            <div class="form-group">
+                                <label for="admin-video-url">URL do Vídeo</label>
+                                <input type="url" id="admin-video-url" name="admin-video-url" placeholder="https://..." required>
+                            </div>
+                            <div class="form-group">
+                                <label for="image-file">Imagem de Miniatura</label>
+                                <input type="file" id="image-file" name="image-file" accept="image/*" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="admin-text">Texto de Descrição</label>
+                                <textarea id="admin-text" name="admin-text" placeholder="Descrição do vídeo" rows="4" required></textarea>
+                            </div>
+                            <button type="submit" class="admin-button">Adicionar Aula</button>
+                            <div id="admin-message" class="admin-message"></div>
+                            <div id="loading-message">Carregando imagem...</div>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="videos-list-screen" class="list-container" style="display: none;">
+                    <h2>Aulas Cadastradas</h2>
+                    <div id="videos-grid" class="content-grid">
+                    </div>
+                </div>
+
+                <div id="image-upload-screen" class="admin-container" style="display: none;">
+                    <div class="admin-card">
+                        <h2>Upload de Imagem e Texto</h2>
+                        <form id="image-upload-form">
+                            <div class="form-group">
+                                <label for="upload-image-file">Selecione a Imagem</label>
+                                <input type="file" id="upload-image-file" name="upload-image-file" accept="image/*" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="upload-image-text">Texto Abaixo da Imagem</label>
+                                <textarea id="upload-image-text" name="upload-image-text" placeholder="Digite o texto aqui..." rows="4" required></textarea>
+                            </div>
+                            <button type="submit" class="admin-button">Fazer Upload</button>
+                            <div id="upload-message" class="admin-message"></div>
+                            <div id="upload-loading-message" style="display: none;">Carregando...</div>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="image-list-screen" class="list-container" style="display: none;">
+                    <h2>Material de Apoio Cadastrado</h2>
+                    <div id="images-grid" class="content-grid">
+                    </div>
+                </div>
+
+                <div id="add-oferta-screen" class="admin-container" style="display: none;">
+                    <div class="admin-card">
+                        <h2>Adicionar Nova Oferta ou Produto</h2>
+                        <form id="oferta-form">
+                            <div class="form-group">
+                                <label for="oferta-title">Título do Cartão</label>
+                                <input type="text" id="oferta-title" name="oferta-title" placeholder="Ex: Doação, Bíblias..." required>
+                            </div>
+                            <div class="form-group">
+                                <label for="oferta-image-file">Imagem para o Cartão</label>
+                                <input type="file" id="oferta-image-file" name="oferta-image-file" accept="image/*" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="oferta-text">Descrição</label>
+                                <textarea id="oferta-text" name="oferta-text" placeholder="Descreva a oferta ou o produto." rows="4" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="oferta-price">Valor (Opcional)</label>
+                                <input type="text" id="oferta-price" name="oferta-price" placeholder="Ex: 50,00 ou deixe em branco">
+                            </div>
+                            <div class="form-group">
+                                <label for="oferta-payment-link">Link de Pagamento (Opcional)</label>
+                                <input type="url" id="oferta-payment-link" name="oferta-payment-link" placeholder="Ex: https://pagseguro.com/link-doacao">
+                            </div>
+                            <button type="submit" class="admin-button">Cadastrar Cartão</button>
+                            <div id="oferta-message" class="admin-message"></div>
+                            <div id="oferta-loading-message" style="display: none;">Carregando...</div>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="ofertas-list-screen" class="list-container" style="display: none;">
+                    <h2>Ofertas e Produtos Cadastrados</h2>
+                    <div id="ofertas-grid" class="content-grid">
+                    </div>
+                </div>
+
+                <div id="manage-events-screen" class="admin-container" style="display: none;">
+                    <div class="admin-card">
+                        <h2>Adicionar Novo Evento</h2>
+                        <form id="event-form">
+                            <div class="form-group">
+                                <label for="event-title">Título do Evento</label>
+                                <input type="text" id="event-title" name="event-title" placeholder="Ex: Culto de Jovens" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="event-date">Data</label>
+                                <input type="date" id="event-date" name="event-date" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="event-time">Hora</label>
+                                <input type="time" id="event-time" name="event-time" required>
+                            </div>
+                            <button type="submit" class="admin-button">Adicionar Evento</button>
+                            <div id="event-message" class="admin-message"></div>
+                            <div id="event-loading-message" style="display: none;">Carregando...</div>
+                        </form>
+                    </div>
+                    <div class="list-container">
+                        <h2>Eventos Cadastrados</h2>
+                        <div id="events-grid" class="content-grid">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="add-reading-plan-screen" class="admin-container" style="display: none;">
+                    <div class="admin-card">
+                        <h2>Adicionar Plano de Leitura</h2>
+                        <form id="reading-plan-form">
+                            <div class="form-group">
+                                <label for="reading-plan-date">Data da Leitura</label>
+                                <input type="date" id="reading-plan-date" name="reading-plan-date" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="reading-plan-title">Título</label>
+                                <input type="text" id="reading-plan-title" name="reading-plan-title" placeholder="Ex: Livro de Gênesis" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="reading-plan-verse">Versículo Chave</label>
+                                <input type="text" id="reading-plan-verse" name="reading-plan-verse" placeholder="Ex: Gênesis 1:1" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="reading-plan-text">Texto de Leitura</label>
+                                <textarea id="reading-plan-text" name="reading-plan-text" placeholder="Digite o texto de leitura aqui..." rows="6" required></textarea>
+                            </div>
+                            <button type="submit" class="admin-button">Adicionar Leitura</button>
+                            <div id="reading-plan-message" class="admin-message"></div>
+                            <div id="reading-plan-loading-message" style="display: none;">Carregando...</div>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="reading-plans-list-screen" class="list-container" style="display: none;">
+                    <h2>Planos de Leitura Cadastrados</h2>
+                    <div id="reading-plans-list">
+                    </div>
+                </div>
+
+                <div id="prayer-requests-screen" class="list-container" style="display: none;">
+                    <h2>Pedidos de Oração</h2>
+                    <div id="prayer-requests-list">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="confirmation-modal" class="modal">
+            <div class="modal-content">
+                <p>Tem certeza que deseja excluir este item?</p>
+                <div class="modal-buttons">
+                    <button id="confirm-delete-button" class="modal-button confirm">Excluir</button>
+                    <button id="cancel-delete-button" class="modal-button cancel">Cancelar</button>
+                </div>
+            </div>
+        </div>
+
+        <script type="module">
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+            import { getAuth, onAuthStateChanged, signOut, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+            import { getFirestore, collection, addDoc, serverTimestamp, onSnapshot, query, getDocs, doc, deleteDoc, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+            import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
+
+            window.addEventListener('DOMContentLoaded', () => {
+
+                // UI Elements
+                const loginScreen = document.getElementById('login-screen-admin');
+                const mainScreen = document.getElementById('main-screen-admin');
+                const loginForm = document.getElementById('login-form-admin');
+                const loginMessage = document.getElementById('login-message-admin');
+                const adminForm = document.getElementById('admin-form');
+                const adminMessage = document.getElementById('admin-message');
+                const loadingMessage = document.getElementById('loading-message');
+                const imageUploadForm = document.getElementById('image-upload-form');
+                const uploadMessage = document.getElementById('upload-message');
+                const uploadLoadingMessage = document.getElementById('upload-loading-message');
+                const ofertaForm = document.getElementById('oferta-form');
+                const ofertaMessage = document.getElementById('oferta-message');
+                const ofertaLoadingMessage = document.getElementById('oferta-loading-message');
+                const eventForm = document.getElementById('event-form');
+                const eventMessage = document.getElementById('event-message');
+                const eventLoadingMessage = document.getElementById('event-loading-message');
+                const readingPlanForm = document.getElementById('reading-plan-form');
+                const readingPlanMessage = document.getElementById('reading-plan-message');
+                const readingPlanLoadingMessage = document.getElementById('reading-plan-loading-message');
+                const logoutButtonSidebar = document.getElementById('logout-button');
+                const logoutButtonHeader = document.getElementById('logout-button-header');
+                const addClassLink = document.getElementById('add-class-link');
+                const manageContentLink = document.getElementById('manage-content-link');
+                const imageUploadLink = document.getElementById('image-upload-link');
+                const manageImagesLink = document.getElementById('manage-images-link');
+                const addOfertaLink = document.getElementById('add-oferta-link');
+                const manageOfertasLink = document.getElementById('manage-ofertas-link');
+                const addEventLink = document.getElementById('add-event-link');
+                const managePrayerRequestsLink = document.getElementById('manage-prayer-requests-link');
+                const addReadingPlanLink = document.getElementById('add-reading-plan-link');
+                const manageReadingPlansLink = document.getElementById('manage-reading-plans-link');
+                const addClassScreen = document.getElementById('add-class-screen');
+                const videosListScreen = document.getElementById('videos-list-screen');
+                const imageUploadScreen = document.getElementById('image-upload-screen');
+                const imageListScreen = document.getElementById('image-list-screen');
+                const addOfertaScreen = document.getElementById('add-oferta-screen');
+                const ofertasListScreen = document.getElementById('ofertas-list-screen');
+                const manageEventsScreen = document.getElementById('manage-events-screen');
+                const prayerRequestsScreen = document.getElementById('prayer-requests-screen');
+                const addReadingPlanScreen = document.getElementById('add-reading-plan-screen');
+                const readingPlansListScreen = document.getElementById('reading-plans-list-screen');
+                const videosGrid = document.getElementById('videos-grid');
+                const imagesGrid = document.getElementById('images-grid');
+                const ofertasGrid = document.getElementById('ofertas-grid');
+                const eventsGrid = document.getElementById('events-grid');
+                const prayerRequestsList = document.getElementById('prayer-requests-list');
+                const readingPlansList = document.getElementById('reading-plans-list');
+                const confirmationModal = document.getElementById('confirmation-modal');
+                const confirmDeleteButton = document.getElementById('confirm-delete-button');
+                const cancelDeleteButton = document.getElementById('cancel-delete-button');
+                let db, auth, storage;
+                let isFirebaseInitialized = false;
+                let itemToDelete;
+
+                const showScreen = (screenToShow) => {
+                    const screens = [addClassScreen, videosListScreen, imageUploadScreen, imageListScreen, addOfertaScreen, ofertasListScreen, manageEventsScreen, prayerRequestsScreen, addReadingPlanScreen, readingPlansListScreen];
+                    screens.forEach(screen => {
+                        if (screen) {
+                            screen.style.display = 'none';
+                        }
+                    });
+                    if (screenToShow) {
+                        screenToShow.style.display = 'block';
+                    }
+                };
+
+                const showLoginScreen = () => {
+                    loginScreen.style.display = 'flex';
+                    mainScreen.style.display = 'none';
+                };
+
+                const showMainScreen = () => {
+                    loginScreen.style.display = 'none';
+                    mainScreen.style.display = 'flex';
+                    // Show the default screen upon login
+                    showScreen(addClassScreen);
+                };
+
+                const openConfirmationModal = (item, collectionName, storagePath) => {
+                    itemToDelete = { item, collectionName, storagePath };
+                    confirmationModal.style.display = 'flex';
+                };
+
+                const closeConfirmationModal = () => {
+                    itemToDelete = null;
+                    confirmationModal.style.display = 'none';
+                };
+                
+                const deleteItem = async () => {
+                    if (!itemToDelete || !db) return;
+                    const { item, collectionName, storagePath } = itemToDelete;
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                    
+                    try {
+                        let docPath;
+                        if (collectionName === 'prayerRequests') {
+                            // Caminho para pedidos de oração
+                            docPath = `artifacts/${appId}/users/${auth.currentUser.uid}/${collectionName}/${item.id}`;
+                        } else {
+                            // Caminho para outros documentos
+                            docPath = `artifacts/${appId}/public/data/${collectionName}/${item.id}`;
+                        }
+                        
+                        const docRef = doc(db, docPath);
+                        await deleteDoc(docRef);
+
+                        // Apenas tente deletar do storage se for um item com imagem
+                        if (storagePath && storage) {
+                            const imageRef = ref(storage, storagePath);
+                            await deleteObject(imageRef);
+                            console.log("Imagem excluída com sucesso!");
+                        }
+                        console.log("Documento excluído com sucesso!");
+                    } catch (error) {
+                        console.error("Erro ao excluir documento ou imagem:", error);
+                    } finally {
+                        closeConfirmationModal();
+                    }
+                };
+
+                // Event Listeners for sidebar navigation
+                addClassLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showScreen(addClassScreen);
+                });
+                manageContentLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showScreen(videosListScreen);
+                });
+                imageUploadLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showScreen(imageUploadScreen);
+                });
+                manageImagesLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showScreen(imageListScreen);
+                });
+                addOfertaLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showScreen(addOfertaScreen);
+                });
+                manageOfertasLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showScreen(ofertasListScreen);
+                });
+                addEventLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showScreen(manageEventsScreen);
+                });
+                managePrayerRequestsLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showScreen(prayerRequestsScreen);
+                });
+                addReadingPlanLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showScreen(addReadingPlanScreen);
+                });
+                manageReadingPlansLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showScreen(readingPlansListScreen);
+                });
+
+                // Logout functionality
+                if (logoutButtonSidebar) {
+                    logoutButtonSidebar.addEventListener('click', () => {
+                        signOut(auth);
+                    });
+                }
+
+                if (logoutButtonHeader) {
+                    logoutButtonHeader.addEventListener('click', () => {
+                        signOut(auth);
+                    });
+                }
+                
+                // Add new class form submission
+                adminForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    loadingMessage.style.display = 'block';
+                    adminMessage.textContent = '';
+                    const videoUrl = document.getElementById('admin-video-url').value;
+                    const imageFile = document.getElementById('image-file').files[0];
+                    const text = document.getElementById('admin-text').value;
+
+                    if (!videoUrl || !imageFile || !text) {
+                        adminMessage.textContent = "Por favor, preencha todos os campos.";
+                        adminMessage.style.color = '#fca5a5';
+                        loadingMessage.style.display = 'none';
+                        return;
+                    }
+
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                    const storageRef = ref(storage, `artifacts/${appId}/public/images/${imageFile.name}`);
+                    
+                    try {
+                        await uploadBytes(storageRef, imageFile);
+                        const imageUrl = await getDownloadURL(storageRef);
+                        
+                        await addDoc(collection(db, `artifacts/${appId}/public/data/videos`), {
+                            videoUrl: videoUrl,
+                            imageUrl: imageUrl,
+                            text: text,
+                            createdAt: serverTimestamp()
+                        });
+                        
+                        adminMessage.textContent = "Aula adicionada com sucesso!";
+                        adminMessage.style.color = '#a7f3d0';
+                        adminForm.reset();
+                    } catch (error) {
+                        console.error("Erro ao adicionar documento: ", error);
+                        adminMessage.textContent = "Erro ao adicionar aula. Tente novamente.";
+                        adminMessage.style.color = '#fca5a5';
+                    } finally {
+                        loadingMessage.style.display = 'none';
+                    }
+                });
+                
+                // Image upload form submission
+                imageUploadForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    uploadLoadingMessage.style.display = 'block';
+                    uploadMessage.textContent = '';
+                    const imageFile = document.getElementById('upload-image-file').files[0];
+                    const text = document.getElementById('upload-image-text').value;
+
+                    if (!imageFile || !text) {
+                        uploadMessage.textContent = "Por favor, selecione uma imagem e adicione um texto.";
+                        uploadMessage.style.color = '#fca5a5';
+                        uploadLoadingMessage.style.display = 'none';
+                        return;
+                    }
+
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                    const storageRef = ref(storage, `artifacts/${appId}/public/images/${imageFile.name}`);
+
+                    try {
+                        await uploadBytes(storageRef, imageFile);
+                        const imageUrl = await getDownloadURL(storageRef);
+                        
+                        await addDoc(collection(db, `artifacts/${appId}/public/data/materialApoio`), {
+                            imageUrl: imageUrl,
+                            text: text,
+                            createdAt: serverTimestamp()
+                        });
+
+                        uploadMessage.textContent = "Imagem e texto enviados com sucesso!";
+                        uploadMessage.style.color = '#a7f3d0';
+                        imageUploadForm.reset();
+                    } catch (error) {
+                        console.error("Erro ao fazer upload:", error);
+                        uploadMessage.textContent = "Erro ao fazer upload. Tente novamente.";
+                        uploadMessage.style.color = '#fca5a5';
+                    } finally {
+                        uploadLoadingMessage.style.display = 'none';
+                    }
+                });
+
+                // Oferta form submission
+                ofertaForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    ofertaLoadingMessage.style.display = 'block';
+                    ofertaMessage.textContent = '';
+                    const title = document.getElementById('oferta-title').value;
+                    const imageFile = document.getElementById('oferta-image-file').files[0];
+                    const text = document.getElementById('oferta-text').value;
+                    const price = document.getElementById('oferta-price').value;
+                    const paymentLink = document.getElementById('oferta-payment-link').value;
+
+                    if (!title || !imageFile || !text) {
+                        ofertaMessage.textContent = "Por favor, preencha todos os campos obrigatórios.";
+                        ofertaMessage.style.color = '#fca5a5';
+                        ofertaLoadingMessage.style.display = 'none';
+                        return;
+                    }
+
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                    const storageRef = ref(storage, `artifacts/${appId}/public/images/ofertas/${imageFile.name}`);
+                    
+                    try {
+                        await uploadBytes(storageRef, imageFile);
+                        const imageUrl = await getDownloadURL(storageRef);
+                        
+                        await addDoc(collection(db, `artifacts/${appId}/public/data/ofertas`), {
+                            title,
+                            imageUrl,
+                            text,
+                            price,
+                            paymentLink,
+                            createdAt: serverTimestamp()
+                        });
+                        
+                        ofertaMessage.textContent = "Cartão de oferta/produto adicionado com sucesso!";
+                        ofertaMessage.style.color = '#a7f3d0';
+                        ofertaForm.reset();
+                    } catch (error) {
+                        console.error("Erro ao adicionar oferta: ", error);
+                        ofertaMessage.textContent = "Erro ao adicionar oferta. Tente novamente.";
+                        ofertaMessage.style.color = '#fca5a5';
+                    } finally {
+                        ofertaLoadingMessage.style.display = 'none';
+                    }
+                });
+
+                // Event form submission
+                eventForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    eventLoadingMessage.style.display = 'block';
+                    eventMessage.textContent = '';
+                    const title = document.getElementById('event-title').value;
+                    const date = document.getElementById('event-date').value;
+                    const time = document.getElementById('event-time').value;
+
+                    if (!title || !date || !time) {
+                        eventMessage.textContent = "Por favor, preencha todos os campos.";
+                        eventMessage.style.color = '#fca5a5';
+                        eventLoadingMessage.style.display = 'none';
+                        return;
+                    }
+
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                    
+                    try {
+                        await addDoc(collection(db, `artifacts/${appId}/public/data/events`), {
+                            title,
+                            date,
+                            time,
+                            createdAt: serverTimestamp()
+                        });
+                        
+                        eventMessage.textContent = "Evento adicionado com sucesso!";
+                        eventMessage.style.color = '#a7f3d0';
+                        eventForm.reset();
+                    } catch (error) {
+                        console.error("Erro ao adicionar evento: ", error);
+                        eventMessage.textContent = "Erro ao adicionar evento. Tente novamente.";
+                        eventMessage.style.color = '#fca5a5';
+                    } finally {
+                        eventLoadingMessage.style.display = 'none';
+                    }
+                });
+
+                // Reading plan form submission
+                readingPlanForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    readingPlanLoadingMessage.style.display = 'block';
+                    readingPlanMessage.textContent = '';
+                    const date = document.getElementById('reading-plan-date').value;
+                    const title = document.getElementById('reading-plan-title').value;
+                    const verse = document.getElementById('reading-plan-verse').value;
+                    const text = document.getElementById('reading-plan-text').value;
+
+                    if (!date || !title || !verse || !text) {
+                        readingPlanMessage.textContent = "Por favor, preencha todos os campos.";
+                        readingPlanMessage.style.color = '#fca5a5';
+                        readingPlanLoadingMessage.style.display = 'none';
+                        return;
+                    }
+
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                    
+                    try {
+                        await addDoc(collection(db, `artifacts/${appId}/public/data/readingPlans`), {
+                            date,
+                            title,
+                            verse,
+                            text,
+                            createdAt: serverTimestamp()
+                        });
+                        
+                        readingPlanMessage.textContent = "Plano de leitura adicionado com sucesso!";
+                        readingPlanMessage.style.color = '#a7f3d0';
+                        readingPlanForm.reset();
+                    } catch (error) {
+                        console.error("Erro ao adicionar plano de leitura: ", error);
+                        readingPlanMessage.textContent = "Erro ao adicionar plano de leitura. Tente novamente.";
+                        readingPlanMessage.style.color = '#fca5a5';
+                    } finally {
+                        readingPlanLoadingMessage.style.display = 'none';
+                    }
+                });
+                
+                confirmDeleteButton.addEventListener('click', deleteItem);
+                cancelDeleteButton.addEventListener('click', closeConfirmationModal);
+                
+                const setupFirestoreListeners = (appId) => {
+                    // Listener para Aulas
+                    const videosQuery = query(collection(db, `artifacts/${appId}/public/data/videos`), orderBy("createdAt", "desc"));
+                    onSnapshot(videosQuery, (snapshot) => {
+                        videosGrid.innerHTML = '';
+                        if (snapshot.empty) {
+                            videosGrid.innerHTML = '<p style="text-align:center;">Nenhuma aula encontrada.</p>';
+                            return;
+                        }
+                        snapshot.forEach((doc) => {
+                            const video = doc.data();
+                            const cardHtml = `
+                                <div class="content-card">
+                                    <img src="${video.imageUrl}" alt="${video.text}">
+                                    <div class="content-card-content">
+                                        <h3>${video.text}</h3>
+                                        <div class="action-buttons">
+                                            <a href="${video.videoUrl}" target="_blank" class="button">Abrir Vídeo</a>
+                                            <button class="delete-button" data-id="${doc.id}" data-type="video" data-storage-path="${video.imageUrl}">Excluir</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                            videosGrid.insertAdjacentHTML('beforeend', cardHtml);
+                        });
+                        document.querySelectorAll('.delete-button[data-type="video"]').forEach(button => {
+                            button.addEventListener('click', (e) => {
+                                e.preventDefault();
+                                const docId = e.target.dataset.id;
+                                const imageUrl = e.target.dataset.storagePath;
+                                openConfirmationModal({ id: docId, imageUrl }, 'videos', imageUrl);
+                            });
+                        });
+                    });
+
+                    // Listener para Material de Apoio
+                    const imagesQuery = query(collection(db, `artifacts/${appId}/public/data/materialApoio`), orderBy("createdAt", "desc"));
+                    onSnapshot(imagesQuery, (snapshot) => {
+                        imagesGrid.innerHTML = '';
+                        if (snapshot.empty) {
+                            imagesGrid.innerHTML = '<p style="text-align:center;">Nenhum material de apoio encontrado.</p>';
+                            return;
+                        }
+                        snapshot.forEach((doc) => {
+                            const image = doc.data();
+                            const cardHtml = `
+                                <div class="content-card">
+                                    <img src="${image.imageUrl}" alt="Imagem de apoio">
+                                    <div class="content-card-content">
+                                        <p>${image.text}</p>
+                                        <div class="action-buttons">
+                                            <a href="${image.imageUrl}" target="_blank" class="button">Ver Imagem</a>
+                                            <button class="delete-button" data-id="${doc.id}" data-type="image" data-storage-path="${image.imageUrl}">Excluir</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                            imagesGrid.insertAdjacentHTML('beforeend', cardHtml);
+                        });
+                        document.querySelectorAll('.delete-button[data-type="image"]').forEach(button => {
+                            button.addEventListener('click', (e) => {
+                                e.preventDefault();
+                                const docId = e.target.dataset.id;
+                                const imageUrl = e.target.dataset.storagePath;
+                                openConfirmationModal({ id: docId, imageUrl }, 'materialApoio', imageUrl);
+                            });
+                        });
+                    });
+
+                    // Listener para Ofertas
+                    const ofertasQuery = query(collection(db, `artifacts/${appId}/public/data/ofertas`), orderBy("createdAt", "desc"));
+                    onSnapshot(ofertasQuery, (snapshot) => {
+                        ofertasGrid.innerHTML = '';
+                        if (snapshot.empty) {
+                            ofertasGrid.innerHTML = '<p style="text-align:center;">Nenhuma oferta encontrada.</p>';
+                            return;
+                        }
+                        snapshot.forEach((doc) => {
+                            const oferta = doc.data();
+                            const cardHtml = `
+                                <div class="content-card">
+                                    <img src="${oferta.imageUrl}" alt="${oferta.title}">
+                                    <div class="content-card-content">
+                                        <h3>${oferta.title}</h3>
+                                        <p>${oferta.text}</p>
+                                        ${oferta.price ? `<p><b>Valor:</b> R$ ${oferta.price}</p>` : ''}
+                                        <div class="action-buttons">
+                                            ${oferta.paymentLink ? `<a href="${oferta.paymentLink}" target="_blank" class="button">Pagar</a>` : ''}
+                                            <button class="delete-button" data-id="${doc.id}" data-type="oferta" data-storage-path="${oferta.imageUrl}">Excluir</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                            ofertasGrid.insertAdjacentHTML('beforeend', cardHtml);
+                        });
+                        document.querySelectorAll('.delete-button[data-type="oferta"]').forEach(button => {
+                            button.addEventListener('click', (e) => {
+                                e.preventDefault();
+                                const docId = e.target.dataset.id;
+                                const imageUrl = e.target.dataset.storagePath;
+                                openConfirmationModal({ id: docId, imageUrl }, 'ofertas', imageUrl);
+                            });
+                        });
+                    });
+                    
+                    // Listener para Eventos
+                    const eventsQuery = query(collection(db, `artifacts/${appId}/public/data/events`), orderBy("date", "asc"), orderBy("time", "asc"));
+                    onSnapshot(eventsQuery, (snapshot) => {
+                        eventsGrid.innerHTML = '';
+                        if (snapshot.empty) {
+                            eventsGrid.innerHTML = '<p style="text-align:center;">Nenhum evento encontrado.</p>';
+                            return;
+                        }
+                        snapshot.forEach((docSnap) => {
+                            const event = docSnap.data();
+                            const eventHtml = `
+                                <div class="event-card">
+                                    <h3>${event.title}</h3>
+                                    <p><b>Data:</b> ${event.date}</p>
+                                    <p><b>Hora:</b> ${event.time}</p>
+                                    <div class="action-buttons">
+                                        <button class="delete-button" data-id="${docSnap.id}" data-type="event">Excluir</button>
+                                    </div>
+                                </div>
+                            `;
+                            eventsGrid.insertAdjacentHTML('beforeend', eventHtml);
+                        });
+                        document.querySelectorAll('.delete-button[data-type="event"]').forEach(button => {
+                            button.addEventListener('click', (e) => {
+                                e.preventDefault();
+                                const docId = e.target.dataset.id;
+                                openConfirmationModal({ id: docId }, 'events');
+                            });
+                        });
+                    });
+
+                    // Listener para Pedidos de Oração
+                    const prayerRequestsQuery = query(
+                        collection(db, `artifacts/${appId}/users/${auth.currentUser.uid}/prayerRequests`),
+                        orderBy("createdAt", "desc")
+                    );
+                    onSnapshot(prayerRequestsQuery, (snapshot) => {
+                        prayerRequestsList.innerHTML = '';
+                        if (snapshot.empty) {
+                            prayerRequestsList.innerHTML = '<p style="text-align:center;">Nenhum pedido de oração encontrado.</p>';
+                            return;
+                        }
+                        snapshot.forEach((docSnap) => {
+                            const prayer = docSnap.data();
+                            const date = prayer.createdAt.toDate().toLocaleDateString();
+                            const time = prayer.createdAt.toDate().toLocaleTimeString();
+                            const prayerHtml = `
+                                <div class="prayer-request-card">
+                                    <h3>De: ${prayer.name}</h3>
+                                    <p><b>Pedido:</b> ${prayer.request}</p>
+                                    <p class="prayer-meta">Recebido em: ${date} às ${time}</p>
+                                    <button class="delete-prayer-button" data-id="${docSnap.id}" data-type="prayerRequest">Excluir</button>
+                                </div>
+                            `;
+                            prayerRequestsList.insertAdjacentHTML('beforeend', prayerHtml);
+                        });
+                        document.querySelectorAll('.delete-prayer-button').forEach(button => {
+                            button.addEventListener('click', (e) => {
+                                e.preventDefault();
+                                const docId = e.target.dataset.id;
+                                openConfirmationModal({ id: docId }, 'prayerRequests');
+                            });
+                        });
+                    });
+
+                    // NOVO: Listener para Plano de Leitura
+                    const readingPlansQuery = query(
+                        collection(db, `artifacts/${appId}/public/data/readingPlans`),
+                        orderBy("date", "desc")
+                    );
+                    onSnapshot(readingPlansQuery, (snapshot) => {
+                        readingPlansList.innerHTML = '';
+                        if (snapshot.empty) {
+                            readingPlansList.innerHTML = '<p style="text-align:center;">Nenhum plano de leitura encontrado.</p>';
+                            return;
+                        }
+                        snapshot.forEach((docSnap) => {
+                            const plan = docSnap.data();
+                            const planHtml = `
+                                <div class="reading-plan-card">
+                                    <p class="reading-meta"><b>Data:</b> ${plan.date}</p>
+                                    <h3>${plan.title}</h3>
+                                    <p><b>Versículo:</b> ${plan.verse}</p>
+                                    <p><b>Texto:</b> ${plan.text}</p>
+                                    <div class="action-buttons">
+                                        <button class="delete-reading-plan-button" data-id="${docSnap.id}">Excluir</button>
+                                    </div>
+                                </div>
+                            `;
+                            readingPlansList.insertAdjacentHTML('beforeend', planHtml);
+                        });
+                        document.querySelectorAll('.delete-reading-plan-button').forEach(button => {
+                            button.addEventListener('click', (e) => {
+                                e.preventDefault();
+                                const docId = e.target.dataset.id;
+                                openConfirmationModal({ id: docId }, 'readingPlans');
+                            });
+                        });
+                    });
+                };
+                
+                // Login
+                loginForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const email = document.getElementById('email-admin').value;
+                    const password = document.getElementById('password-admin').value;
+                    loginMessage.textContent = '';
+                    
+                    try {
+                        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                        console.log('Login com sucesso!', userCredential.user);
+                    } catch (error) {
+                        console.error('Erro no login:', error.code);
+                        loginMessage.textContent = 'Falha no login. Verifique seu email e senha.';
+                        loginMessage.style.color = '#fca5a5';
+                    }
+                });
+
+                const setupFirebase = () => {
+                    try {
+                        const firebaseConfig = {
+                            apiKey: "AIzaSyArteycUkaN5-dClQ28oHSl-NoiL-s4NaY",
+                            authDomain: "app-obpc-49823.firebaseapp.com",
+                            projectId: "app-obpc-49823",
+                            storageBucket: "app-obpc-49823.firebasestorage.app",
+                            messagingSenderId: "690083146419",
+                            appId: "1:690083146419:web:c03301f1aca7dd2d299ec6",
+                            measurementId: "G-KJPSSSC575"
+                        };
+                    
+                        const app = initializeApp(firebaseConfig);
+                        auth = getAuth(app);
+                        db = getFirestore(app);
+                        storage = getStorage(app);
+                        isFirebaseInitialized = true;
+                        
+                        onAuthStateChanged(auth, async (user) => {
+                            if (user) {
+                                console.log("Usuário autenticado:", user.uid);
+                                showMainScreen();
+                                const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                                setupFirestoreListeners(appId);
+                            } else {
+                                console.log("Usuário não autenticado.");
+                                showLoginScreen();
+                            }
+                        });
+
+                    } catch (e) {
+                        console.error("Falha ao inicializar o Firebase. Verifique sua configuração.", e);
+                        loginMessage.textContent = 'Erro: O aplicativo não pode se conectar aos serviços do Firebase.';
+                        loginMessage.style.color = 'yellow';
+                    }
+                };
+
+                setupFirebase();
+            });
+        </script>
+    </body>
+</html>

@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="color-scheme" content="light dark">
+    <title>Obpc School - Leitura Diária</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Anton&family=Funnel+Sans:wght@400;600&family=Manrope:wght@400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Anton&family=Boldonse&family=Funnel+Sans:ital,wght@0,300..800;1,300..800&family=Manrope:wght@200..800;1,200..800&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Unbounded:wght@200..900&display=swap');
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        html, body {
+            height: 100%;
+        }
+        
+        body {
+            background: #000;
+            color: #fff;
+            font-family: "Funnel Sans", sans-serif;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        a { text-decoration: none; color: inherit; }
+        
+        /* cabeçalho */
+        .container-header { 
+            display: flex; flex-direction: column; align-items: center; 
+            background: #000; padding: 15px 0; 
+        }
+        .header-top h1 { font-family: 'Anton', sans-serif; font-size: 1.5rem; letter-spacing: 2px; color: #E25402; }
+        .header-top h1 span { color: #fff; }
+        .header-top-line { width: 150px; height: 2px; background: #E25402; margin: 5px auto; }
+        
+        /* Conteúdo principal para permitir scroll */
+        .main-content {
+            flex-grow: 1; 
+            padding: 1rem;
+            padding-bottom: 80px; 
+            overflow-y: auto; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 1.5rem;
+        }
+        .main-content h2 {
+            font-size: 1.8rem;
+            color: #E25402;
+            margin-bottom: 1rem;
+        }
+        
+        /* cards de leitura */
+        .reading-plan-list {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            width: 100%;
+            max-width: 600px;
+        }
+        .reading-plan-card {
+            background: #1e1e1e; 
+            border-radius: 12px; 
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            position: relative; 
+            width: 100%;
+            text-align: left;
+        }
+        .reading-plan-card .date {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #888;
+            margin-bottom: 0.5rem;
+        }
+        .reading-plan-card .title { 
+            font-size: 1.2rem;
+            font-weight: bold; 
+            color: #f4802c; 
+            margin-bottom: 0.5rem; 
+        }
+        .reading-plan-card .verse {
+            font-size: 1rem;
+            opacity: .8; 
+            margin-bottom: 0.5rem;
+            font-style: italic;
+        }
+        .reading-plan-card .text {
+            font-size: 1rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+        
+        /* Botão de leitura */
+        .read-button {
+            background-color: #E25402;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 15px;
+            transition: background-color 0.3s ease, opacity 0.3s ease;
+            width: 100%;
+        }
+        .read-button:hover {
+            background-color: #f4802c;
+        }
+        .read-button:disabled {
+            background-color: #888;
+            cursor: not-allowed;
+        }
+        
+        /* footer fixo */
+        .container-footer {
+            display: flex; justify-content: space-around;
+            background: #000; padding: 10px 0; position: fixed; bottom: 0; width: 100%;
+            z-index: 99; 
+        }
+        .container-footer i { color: #E25402; font-size: 1.5rem; }
+        
+        /* menu lateral */
+        .menu-oculto { 
+            position: fixed; top: 0; right: -100%; width: 250px; height: 100%; 
+            background: #06224A; transition: right .5s ease-in-out; z-index: 999; 
+            display: flex; flex-direction: column; justify-content: space-between;
+            padding-bottom: 20px;
+        }
+        .menu-oculto.active { right: 0; }
+        .menu-oculto > div:first-child { flex-grow: 1; display: flex; flex-direction: column; }
+        .btn-fecharOculto { 
+            font-size: 2rem; color: #fff; text-align: right; padding: 10px 20px; cursor: pointer;
+        }
+        .menu-opcoes { margin-top: 10px; flex-grow: 1; }
+        .menu-opcoes-barra { 
+            padding: 10px 20px; color: #fff; font-size: 1.1rem; cursor: pointer;
+            display: flex; align-items: center; gap: 10px;
+            transition: background-color 0.3s ease;
+        }
+        .menu-opcoes-barra:hover { background-color: rgba(255, 255, 255, 0.1); }
+        .menu-opcoes-barra i { color: #E25402; }
+        
+        .menu-footer {
+            display: flex; flex-direction: column; gap: 15px; padding: 10px 20px;
+        }
+        .perfil-image { 
+            display: flex; align-items: center; gap: 10px; 
+            padding: 10px 0; border-top: 1px solid rgba(255,255,255,0.2); 
+        }
+        .perfil-image img { 
+            width: 50px; 
+            height: 50px; 
+            border-radius: 50%; 
+            border: 2px solid #fff; 
+        }
+        .user-names { display: flex; flex-direction: column; }
+        #menu-user-name { 
+            font-weight: bold; 
+            color: #f4802c; 
+        }
+        #menu-user-surname { font-size: 0.8em; opacity: 0.8; }
+    </style>
+</head>
+<body>
+    <div id="app-container">
+        <header class="container-header">
+            <div class="header-top">
+                <img src="./img/logo-obpc.png" alt="">
+            </div>
+            <div class="header-top-line"></div>
+        </header>
+
+        <div class="main-content">
+            <h2>Plano de Leitura Diária</h2>
+            <div id="reading-plan-list" class="reading-plan-list">
+                <p>Carregando plano de leitura...</p>
+            </div>
+        </div>
+
+        <footer class="container-footer">
+            <div class="home"><a href="index.html"><i class="fa-solid fa-house-chimney-crack"></i></a></div>
+            <div class="oferta"><a href="generoso.html"><i class="fa-solid fa-hand-holding-dollar"></i></a></div>
+            <div class="datas"><a href="events.html"><i class="fa-solid fa-calendar-day"></i></a></div>
+            <div class="mais"><i class="fa-solid fa-bars" id="btn-abrir-menu"></i></div>
+        </footer>
+    </div>
+
+    <div class="menu-oculto" id="menu-oculto">
+        <div>
+            <div class="btn-fecharOculto" id="btn-fechar-menu">x</div>
+            <div class="menu-opcoes">
+                <a href="biblia.html"><div class="menu-opcoes-barra"><i class="fa-solid fa-book-bible"></i> Bíblia</div></a>
+                <a href="notes.html"><div class="menu-opcoes-barra"><i class="fa-solid fa-note-sticky"></i> Anotações</div></a>
+                <a href="leitura-diaria.html"><div class="menu-opcoes-barra"><i class="fa-regular fa-calendar-check"></i> Leitura Diária</div></a>
+                <a href="oracao.html"><div class="menu-opcoes-barra"><i class="fa-solid fa-hands-praying"></i> Oração</div></a>
+            </div>
+        </div>
+        <div class="menu-footer">
+            <div class="perfil-image">
+                <img id="menu-profile-img" src="https://placehold.co/50x50/E25402/FFFFFF" alt="Perfil">
+                <div class="user-names">
+                    <span id="menu-user-name">Carregando...</span>
+                    <span id="menu-user-surname"></span>
+                </div>
+            </div>
+            <div class="menu-opcoes-barra" id="logout-button"><i class="fa-solid fa-right-from-bracket"></i> Sair</div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getAuth, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getFirestore, collection, onSnapshot, query, orderBy, doc, getDoc, setDoc
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // 🔥 Configuração Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyArteycUkaN5-dClQ28oHSl-NoiL-s4NaY",
+            authDomain: "app-obpc-49823.firebaseapp.com",
+            projectId: "app-obpc-49823",
+            storageBucket: "app-obpc-49823.firebasestorage.app",
+            messagingSenderId: "690083146419",
+            appId: "1:690083146419:web:c03301f1aca7dd2d299ec6",
+            measurementId: "G-KJPSSSC575"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = "default-app-id";
+
+        setPersistence(auth, browserLocalPersistence);
+
+        const readingPlanList = document.getElementById('reading-plan-list');
+        const menuUserName = document.getElementById('menu-user-name');
+        const menuUserSurname = document.getElementById('menu-user-surname');
+        const menuProfileImg = document.getElementById('menu-profile-img');
+
+        // Função para buscar ou criar o documento de perfil do usuário no Firestore
+        const fetchOrCreateUserProfile = async (user, appId) => {
+            if (!user) {
+                console.log("Usuário não fornecido para fetchOrCreateUserProfile.");
+                return;
+            }
+            try {
+                const userRef = doc(db, `artifacts/${appId}/users/${user.uid}/profile/profile_data`);
+                const docSnap = await getDoc(userRef);
+
+                if (docSnap.exists()) {
+                    const profileData = docSnap.data();
+                    const fullName = `${profileData.firstName || ''} ${profileData.lastName || ''}`.trim();
+                    menuUserName.textContent = fullName || 'Usuário';
+                    menuUserSurname.textContent = '';
+                    menuProfileImg.src = profileData.profileImageUrl || 'https://placehold.co/50x50/E25402/FFFFFF';
+                } else {
+                    console.log("Nenhum documento de perfil encontrado. Criando um novo...");
+                    
+                    const defaultProfile = {
+                        firstName: user.displayName ? user.displayName.split(' ')[0] : 'Usuário',
+                        lastName: user.displayName ? user.displayName.split(' ').slice(1).join(' ') : '',
+                        profileImageUrl: user.photoURL || 'https://placehold.co/50x50/E25402/FFFFFF'
+                    };
+
+                    await setDoc(userRef, defaultProfile);
+                    
+                    menuUserName.textContent = defaultProfile.firstName;
+                    menuUserSurname.textContent = defaultProfile.lastName;
+                    menuProfileImg.src = defaultProfile.profileImageUrl;
+                }
+            } catch (error) {
+                console.error("Erro ao buscar ou criar dados do perfil:", error);
+                menuUserName.textContent = 'Usuário';
+                menuUserSurname.textContent = '';
+                menuProfileImg.src = 'https://placehold.co/50x50/E25402/FFFFFF';
+            }
+        };
+
+        // Função para buscar e renderizar o plano de leitura, incluindo o status de leitura do usuário
+        const fetchAndRenderReadingPlan = (user) => {
+            if (!user) {
+                console.error("Objeto do usuário não disponível. Não é possível carregar o plano de leitura.");
+                readingPlanList.innerHTML = '<p>Erro: Usuário não autenticado.</p>';
+                return;
+            }
+
+            const readingPlansRef = collection(db, `artifacts/${appId}/public/data/readingPlans`);
+            const q = query(readingPlansRef, orderBy("date", "desc"));
+            
+            onSnapshot(q, async (snapshot) => {
+                readingPlanList.innerHTML = '';
+                if (snapshot.empty) {
+                    readingPlanList.innerHTML = '<p>Nenhum plano de leitura encontrado.</p>';
+                } else {
+                    const userReadingsRef = doc(db, `artifacts/${appId}/users/${user.uid}/readings/plan_progress`);
+                    const userReadingsSnap = await getDoc(userReadingsRef);
+                    const userReadings = userReadingsSnap.exists() ? userReadingsSnap.data() : {};
+
+                    snapshot.forEach((docSnap) => {
+                        const plan = docSnap.data();
+                        const isRead = userReadings[docSnap.id] === true;
+                        const buttonText = isRead ? 'Lido ✅' : 'Marcar como Lido';
+
+                        const planHtml = `
+                            <div class="reading-plan-card" data-doc-id="${docSnap.id}">
+                                <p class="date">${plan.date}</p>
+                                <p class="title">${plan.title}</p>
+                                <p class="verse">${plan.verse}</p>
+                                <p class="text">${plan.text}</p>
+                                <button class="read-button">${buttonText}</button>
+                            </div>
+                        `;
+                        readingPlanList.insertAdjacentHTML('beforeend', planHtml);
+                    });
+
+                    // Adiciona o evento de clique aos botões recém-criados
+                    document.querySelectorAll('.read-button').forEach(button => {
+                        button.addEventListener('click', async (event) => {
+                            const card = event.target.closest('.reading-plan-card');
+                            const docId = card.dataset.docId;
+                            
+                            const userReadingsRef = doc(db, `artifacts/${appId}/users/${user.uid}/readings/plan_progress`);
+                            const userReadingsSnap = await getDoc(userReadingsRef);
+                            const userReadingsData = userReadingsSnap.exists() ? userReadingsSnap.data() : {};
+                            const isCurrentlyRead = userReadingsData[docId] === true;
+
+                            const newState = !isCurrentlyRead;
+                            
+                            try {
+                                await setDoc(userReadingsRef, { [docId]: newState }, { merge: true });
+                                event.target.textContent = newState ? 'Lido ✅' : 'Marcar como Lido';
+                                console.log(`Leitura ${docId} atualizada para ${newState}`);
+                            } catch (error) {
+                                console.error("Erro ao atualizar o status de leitura:", error);
+                                alert("Erro ao atualizar o status de leitura. Tente novamente.");
+                            }
+                        });
+                    });
+                }
+            }, (error) => {
+                console.error("Erro ao carregar o plano de leitura: ", error);
+                readingPlanList.innerHTML = '<p>Erro ao carregar o plano de leitura.</p>';
+            });
+        };
+
+        // Observa o estado da autenticação do usuário
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                // Usuário logado, busca perfil e plano de leitura
+                await fetchOrCreateUserProfile(user, appId);
+                fetchAndRenderReadingPlan(user);
+            } else {
+                // Nenhum usuário logado, redireciona para a página de login
+                window.location.href = "index.html";
+            }
+        });
+
+        // Event Listeners da UI
+        document.getElementById("logout-button").addEventListener("click", () => {
+            signOut(auth).then(() => {
+                window.location.href = "index.html";
+            }).catch((error) => {
+                console.error("Erro ao fazer logout:", error);
+            });
+        });
+
+        document.getElementById("btn-abrir-menu").addEventListener("click", () => {
+            document.getElementById("menu-oculto").classList.add("active");
+        });
+
+        document.getElementById("btn-fechar-menu").addEventListener("click", () => {
+            document.getElementById("menu-oculto").classList.remove("active");
+        });
+    </script>
+</body>
+</html>

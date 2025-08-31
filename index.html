@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+        <meta name="color-scheme" content="light dark">
+        <title>Obpc School</title>
+        <script src="cordova.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+        <style>
+            /* Estilos de fonte do Google Fonts */
+            @import url('https://fonts.googleapis.com/css2?family=Anton&family=Boldonse&family=Funnel+Sans:ital,wght@0,300..800;1,300..800&family=Manrope:wght@200..800;1,200..800&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Unbounded:wght@200..900&display=swap');
+            
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            html, body {
+                height: 100%;
+            }
+
+            body {
+                background-color: black;
+                color: white;
+                font-family: "Funnel Sans", sans-serif;
+                display: flex;
+                flex-direction: column;
+            }
+            
+            /* Estilos da página de login */
+            .auth-container {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+                background-color: black;
+                color: white;
+                padding: 20px;
+                font-family: "Funnel Sans", sans-serif;
+            }
+            .auth-card {
+                background-color: #06224A;
+                padding: 30px;
+                border-radius: 15px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+                width: 100%;
+                max-width: 400px;
+                color: #eee;
+                text-align: center;
+            }
+            .auth-card h2 {
+                color: #E25402;
+                font-size: 2rem;
+                margin-bottom: 20px;
+            }
+            .form-group {
+                margin-bottom: 20px;
+                text-align: left;
+            }
+            .form-group input,
+            .form-group select,
+            .form-group .checkbox-group label,
+            .profile-form .form-group input[type="text"],
+            .profile-form .form-group input[type="date"],
+            .profile-form .form-group select,
+            .profile-form .form-group input[type="checkbox"] {
+                width: 100%;
+                padding: 12px;
+                border-radius: 8px;
+                border: 1px solid #E25402;
+                background-color: #333;
+                color: white;
+                font-size: 1rem;
+            }
+            /* Estilo específico para input de tipo 'file' */
+            .profile-form .form-group input[type="file"] {
+                padding: 5px;
+            }
+            .form-group .checkbox-group {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            .auth-button {
+                width: 100%;
+                padding: 12px;
+                border-radius: 8px;
+                background-color: #E25402;
+                color: white;
+                font-weight: bold;
+                border: none;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+            .auth-button:hover {
+                background-color: #d14a02;
+            }
+            .auth-message {
+                text-align: center;
+                margin-top: 10px;
+                font-size: 0.9rem;
+                color: #fca5a5;
+            }
+            .logo {
+                width: 250px;
+                height: auto;
+                margin-bottom: 20px;
+            }
+            
+            /* Estilos da página principal e de detalhes */
+            #app-container {
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+            }
+            .main-content {
+                flex-grow: 1;
+                overflow-y: auto; /* Adiciona scroll vertical apenas nesta área */
+                padding-bottom: 80px; /* Adiciona espaço para o rodapé fixo */
+            }
+            .container-header {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                background-color: #000;
+                padding: 15px 0;
+                position: sticky;
+                top: 0;
+                z-index: 10;
+            }
+            .header-top {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+                padding: 10px;
+            }
+            .header-top h1 {
+                font-family: 'Anton', sans-serif;
+                font-size: 1.5rem;
+                letter-spacing: 2px;
+                color: #E25402;
+                margin: 0;
+            }
+            .header-top h1 span {
+                color: white;
+            }
+            .header-top-line {
+                width: 150px;
+                height: 2px;
+                background-color: #E25402;
+                margin: 5px auto;
+            }
+            .user-info-area {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                width: 100%;
+                padding: 20px 20px 10px 20px;
+                cursor: pointer;
+            }
+            .user-info-left {
+                display: flex;
+                align-items: center;
+            }
+            .perfil-image img {
+                width: 60px;
+                height: 60px;
+                border-radius: 50%;
+                border: 2px solid white;
+                margin-right: 15px;
+                object-fit: cover; /* Garante que a imagem se encaixe sem distorcer */
+            }
+            .user-details {
+                display: flex;
+                flex-direction: column;
+            }
+            .user-details .text-user-name {
+                font-size: 1.2rem;
+                font-weight: bold;
+            }
+            .user-details .text-user-desc {
+                font-size: 0.9rem;
+                color: #ccc;
+            }
+            .user-info-right .cart-icon {
+                font-size: 2rem;
+                color: #E25402;
+            }
+
+            .back-button-container {
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+                width: 100%;
+                padding: 0 20px;
+            }
+            .back-button-container .back-button {
+                background: none;
+                border: none;
+                color: white;
+                font-size: 1rem;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+            }
+            .back-button-container .back-button i {
+                margin-right: 5px;
+            }
+            
+            /* Estilos para a seção "Nossas Aulas" */
+            .nossas-aulas {
+                padding: 20px;
+            }
+            .nossas-aulas h2, .container-material-apoio h2, .oferta-screen-container h2, .profile-screen-container h2 {
+                color: #E25402;
+                text-align: left;
+                margin-bottom: 15px;
+            }
+            
+            /* Estilos para o carrossel de vídeos */
+            .video-carousel-container {
+                position: relative;
+                width: 100%;
+            }
+
+            .video-list-container {
+                display: flex;
+                gap: 20px;
+                overflow-x: scroll; /* Habilita a rolagem horizontal */
+                scroll-snap-type: x mandatory; /* Para que a rolagem pare nos itens */
+                -webkit-overflow-scrolling: touch; /* Melhora a rolagem em dispositivos iOS */
+                padding-bottom: 20px; /* Adiciona espaço para a barra de rolagem */
+            }
+
+            .video-list-container::-webkit-scrollbar {
+                height: 8px;
+            }
+
+            .video-list-container::-webkit-scrollbar-track {
+                background: #333;
+                border-radius: 10px;
+            }
+
+            .video-list-container::-webkit-scrollbar-thumb {
+                background: #E25402;
+                border-radius: 10px;
+            }
+
+            .video-item {
+                background-color: #06224A;
+                border-radius: 10px;
+                overflow: hidden;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+                flex-shrink: 0; /* Impede que os itens encolham */
+                width: 85%; /* Define a largura para o carrossel */
+                scroll-snap-align: start; /* Alinha o início de cada item na rolagem */
+            }
+
+            .video-item .video-thumbnail {
+                width: 100%;
+                height: auto;
+                aspect-ratio: 16 / 9;
+                display: block;
+                object-fit: cover;
+                border-bottom: 2px solid #E25402;
+            }
+            .video-item .video-details {
+                padding: 15px;
+            }
+            .video-item .video-details h3 {
+                font-size: 1.2rem;
+                margin-bottom: 5px;
+                color: white;
+            }
+            .video-item .video-details p {
+                font-size: 0.9rem;
+                color: #ccc;
+            }
+            
+            /* Estilos para a seção "Material de Apoio" */
+            .container-material-apoio {
+                padding: 20px;
+            }
+            .grid-container {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+                text-align: center;
+            }
+            .material-item {
+                cursor: pointer;
+            }
+            .material-item img {
+                width: 100%;
+                height: auto;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            }
+
+            /* Estilos da tela de detalhes do material */
+            .material-detail-content {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding: 20px;
+            }
+            .material-detail-content img {
+                max-width: 100%;
+                height: auto;
+                border-radius: 10px;
+                margin-bottom: 20px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            }
+            .material-detail-content p {
+                font-size: 1.2rem;
+                text-align: justify;
+                word-wrap: break-word;
+            }
+
+            /* Estilos da nova tela de ofertas */
+            .oferta-screen-container {
+                padding: 20px;
+            }
+            .oferta-card {
+                background-color: #06224A;
+                border-radius: 15px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+            .oferta-card img {
+                width: 100%;
+                height: auto;
+                border-radius: 10px;
+                margin-bottom: 15px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            }
+            .oferta-card h3 {
+                color: #E25402;
+                font-size: 1.5rem;
+                margin-bottom: 10px;
+            }
+            .oferta-card p {
+                font-size: 1rem;
+                color: #ccc;
+                line-height: 1.4;
+            }
+            
+            /* Estilos da tela de perfil */
+            .profile-screen-container {
+                padding: 20px;
+            }
+            .profile-form {
+                background-color: #06224A;
+                padding: 20px;
+                border-radius: 15px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+            }
+            .profile-form .form-group label {
+                display: block;
+                margin-bottom: 5px;
+                font-size: 1rem;
+                color: #E25402;
+            }
+            .profile-form .form-group input,
+            .profile-form .form-group select {
+                width: 100%;
+                padding: 10px;
+                border-radius: 8px;
+                border: 1px solid #E25402;
+                background-color: #333;
+                color: white;
+                font-size: 1rem;
+            }
+            .profile-form .form-group input[type="checkbox"] {
+                width: auto;
+                margin-right: 10px;
+            }
+            .profile-form .form-group .checkbox-group label {
+                display: inline;
+                color: white;
+            }
+            .save-profile-btn {
+                width: 100%;
+                padding: 12px;
+                border-radius: 8px;
+                background-color: #E25402;
+                color: white;
+                font-weight: bold;
+                border: none;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+                margin-top: 20px;
+            }
+            .save-profile-btn:hover {
+                background-color: #d14a02;
+            }
+            .save-message {
+                text-align: center;
+                margin-top: 10px;
+                font-size: 0.9rem;
+                color: #fff;
+            }
+            .profile-image-upload {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+            .profile-image-upload img {
+                width: 100px;
+                height: 100px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 2px solid white;
+            }
+
+            /* Classe para esconder telas */
+            .hidden-screen {
+                display: none;
+            }
+            /* Classe para exibir a tela ativa */
+            .active-screen {
+                display: block;
+            }
+
+            /* Estilos do Rodapé e Menu Lateral */
+            .container-footer {
+                display: flex;
+                justify-content: space-around;
+                background-color: #000;
+                padding: 10px 0;
+                position: fixed;
+                bottom: 0;
+                width: 100%;
+                z-index: 10;
+            }
+            .container-footer a {
+                color: white;
+                font-size: 1.5rem;
+                padding: 10px;
+            }
+            .container-footer i {
+                color: #E25402;
+                font-size: 1.5rem;
+            }
+            .menu-oculto {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 250px;
+                height: 100%;
+                background-color: #06224A;
+                z-index: 20;
+                transition: right 0.5s ease-in-out;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                padding-top: 50px;
+                padding-bottom: 20px;
+                overflow-y: auto;
+            }
+            .menu-oculto.active {
+                right: 0;
+            }
+            .btn-fecharOculto {
+                position: absolute;
+                top: 10px;
+                right: 15px;
+                font-size: 1.5rem;
+                color: white;
+                cursor: pointer;
+            }
+            .menu-opcoes-barra {
+                color: white;
+                padding: 15px;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                display: flex;
+                align-items: center;
+                cursor: pointer;
+            }
+            .menu-opcoes-barra i {
+                margin-right: 10px;
+                color: #E25402;
+            }
+            .loading-message, .error-message {
+                text-align: center;
+                padding: 20px;
+                color: #E25402;
+            }
+            .no-classes-message {
+                text-align: center;
+                padding: 20px;
+                color: #ccc;
+            }
+            .menu-footer {
+                padding: 15px;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            .menu-footer .perfil-image {
+                display: flex;
+                align-items: center;
+                margin-bottom: 15px;
+            }
+            .menu-footer .perfil-image img {
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                border: 2px solid white;
+                margin-right: 10px;
+                object-fit: cover;
+            }
+
+            /* Estilos para a tela do player de vídeo */
+            .video-player-screen {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: black;
+                z-index: 100;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .video-player-screen.hidden {
+                display: none;
+            }
+
+            .video-player-container {
+                position: relative;
+                width: 100%;
+                max-width: 900px;
+                aspect-ratio: 16 / 9;
+                background-color: #000;
+            }
+
+            .video-player-container iframe {
+                width: 100%;
+                height: 100%;
+                border: none;
+            }
+
+            .close-player-btn {
+                position: absolute;
+                top: 10px;
+                right: 20px;
+                font-size: 2rem;
+                color: white;
+                cursor: pointer;
+                z-index: 101;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="login-screen" class="auth-container">
+            <div class="auth-card">
+                <img class="logo" alt="Obpc School Logo" src="https://placehold.co/250x50/06224A/E25402?text=OBPC|SCHOOL">
+                <h2>Login</h2>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Senha</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="auth-button">
+                        Entrar
+                    </button>
+                    <div id="login-message" class="auth-message"></div>
+                </form>
+            </div>
+        </div>
+
+        <div id="app-container" style="display: none;">
+            <header class="container-header">
+                <div class="header-top" id="header-logo-section">
+                    <img src="./img/logo-obpc.png" alt="">
+                </div>
+                <div class="header-top-line"></div>
+                <!-- Torna a área de informações do usuário clicável -->
+                <div class="user-info-area" id="header-user-section">
+                    <div class="user-info-left">
+                        <div class="perfil-image">
+                            <img id="main-profile-img" src="https://placehold.co/60x60/E25402/FFFFFF" alt="Perfil">
+                        </div>
+                        <div class="user-details">
+                            <span class="text-user-name" id="user-name-display">Usuário</span>
+                            <span class="text-user-desc">Olá!</span>
+                        </div>
+                    </div>
+                    <div class="user-info-right">
+                        <i class="fa-solid fa-bag-shopping cart-icon"></i>
+                    </div>
+                </div>
+            </header>
+    
+            <div class="main-content">
+                <div id="home-screen" class="app-screen">
+                    <section class="nossas-aulas">
+                        <h2>Nossas Aulas:</h2>
+                        <div class="video-carousel-container">
+                            <div id="video-list-container" class="video-list-container">
+                                <div class="loading-message">Carregando aulas...</div>
+                            </div>
+                        </div>
+                    </section>
+            
+                    <section class="container-material-apoio">
+                        <h2>Material de Apoio:</h2>
+                        <div id="material-grid-container" class="grid-container">
+                            <div class="loading-message">Carregando materiais...</div>
+                        </div>
+                    </section>
+                </div>
+
+                <div id="oferta-screen" class="app-screen hidden-screen">
+                    <section class="oferta-screen-container">
+                        <h2>Ofertas e Dízimos</h2>
+                        <div id="ofertas-list-container">
+                            <div class="loading-message">Carregando ofertas...</div>
+                        </div>
+                    </section>
+                </div>
+
+                <div id="material-detail-container" class="app-screen hidden-screen">
+                    <section class="material-detail-content">
+                        <img id="detail-image" src="" alt="Material de Apoio">
+                        <p id="detail-text"></p>
+                    </section>
+                </div>
+                
+                <!-- Nova tela de perfil do usuário -->
+                <div id="profile-screen" class="app-screen hidden-screen">
+                    <section class="profile-screen-container">
+                        <h2>Meu Perfil</h2>
+                        <form id="profile-form" class="profile-form">
+                            <!-- Seção para a foto de perfil -->
+                            <div class="profile-image-upload">
+                                <img id="profile-preview-img" src="https://placehold.co/100x100/E25402/FFFFFF" alt="Pré-visualização do perfil">
+                                <input type="file" id="profileImage" accept="image/*">
+                            </div>
+                            <!-- Campos do formulário -->
+                            <div class="form-group">
+                                <label for="firstName">Nome:</label>
+                                <input type="text" id="firstName" name="firstName">
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Sobrenome:</label>
+                                <input type="text" id="lastName" name="lastName">
+                            </div>
+                            <div class="form-group">
+                                <label for="address">Endereço:</label>
+                                <input type="text" id="address" name="address">
+                            </div>
+                            <div class="form-group">
+                                <label for="isBaptized">É Batizado?</label>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="isBaptized" name="isBaptized">
+                                    <label for="isBaptized">Sim</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="baptismDate">Data de Batismo:</label>
+                                <input type="date" id="baptismDate" name="baptismDate">
+                            </div>
+                            <div class="form-group">
+                                <label for="conversionDate">Data de Conversão:</label>
+                                <input type="date" id="conversionDate" name="conversionDate">
+                            </div>
+                            <div class="form-group">
+                                <label for="churchRole">Cargo na Igreja:</label>
+                                <select id="churchRole" name="churchRole">
+                                    <option value="">Selecione um cargo</option>
+                                    <option value="diacono">Diácono</option>
+                                    <option value="presbitero">Presbítero</option>
+                                    <option value="pastor">Pastor</option>
+                                    <option value="membro">Membro</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="save-profile-btn">Salvar Alterações</button>
+                            <div id="save-message" class="save-message"></div>
+                        </form>
+                    </section>
+                </div>
+
+            </div>
+    
+            <footer class="container-footer">
+                <div class="home">
+                    <a href="#" id="home-link"><i class="fa-solid fa-house-chimney-crack"></i></a>
+                </div>
+                <div class="oferta">
+                    <a href="generoso.html" ><i class="fa-solid fa-hand-holding-dollar"></i></a>
+                </div>
+                <div class="datas">
+                    <a href="events.html"><i class="fa-solid fa-calendar-day"></i></a>
+                </div>
+                <div class="mais">
+                    <i class="fa-solid fa-bars" id="btn-abrir-menu"></i>
+                </div>
+            </footer>
+        </div>
+
+        <div class="menu-oculto" id="menu-oculto">
+            <div>
+                <div class="btn-fecharOculto" id="btn-fechar-menu">
+                    x
+                </div>
+                <div class="menu-opcoes">
+                    <a href="biblia.html">
+                        <div class="menu-opcoes-barra"><i class="fa-solid fa-book-bible"></i> Bíblia</div>
+                    </a>
+                    <a href="notes.html">
+                    <div class="menu-opcoes-barra"><i class="fa-solid fa-note-sticky"></i> Anotações</div>
+                    </a>
+                    <a href="leitura-diaria.html">
+                    <div class="menu-opcoes-barra"><i class="fa-regular fa-calendar-check"></i> Leitura Diaria</div>
+                    </a>
+                     <a href="oracao.html">
+                    <div class="menu-opcoes-barra"><i class="fa-solid fa-hands-praying"></i> Oração</div>
+                    </a>
+                    <div class="menu-opcoes-barra"><i class="fa-solid fa-file-circle-question"></i> Dúvidas</div>
+                </div>
+            </div>
+            
+            <div class="menu-footer">
+                <div class="perfil-image">
+                    <img id="menu-profile-img" src="https://placehold.co/50x50/E25402/FFFFFF" alt="Perfil">
+                    <div class="user-details">
+                        <span class="text-user-name" id="menu-user-name" >Usuário</span>
+                    </div>
+                </div>  
+                <div class="menu-opcoes-barra" id="logout-button">
+                    <i class="fa-solid fa-right-from-bracket"></i> Sair
+                </div>
+            </div>
+        </div>
+
+        <div id="video-player-screen" class="video-player-screen hidden">
+            <span id="close-player-btn" class="close-player-btn">&times;</span>
+            <div class="video-player-container">
+                <iframe id="video-player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            </div>
+        </div>
+
+        <script type="module">
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+            import { getAuth, onAuthStateChanged, signOut, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+            import { getFirestore, collection, onSnapshot, query, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+            import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
+            
+
+        window.addEventListener('DOMContentLoaded', () => {
+
+    // Elementos da UI
+    const videoListContainer = document.getElementById('video-list-container');
+    const materialGridContainer = document.getElementById('material-grid-container');
+    const ofertasListContainer = document.getElementById('ofertas-list-container');
+    const btnAbrirMenu = document.getElementById('btn-abrir-menu');
+    const btnFecharMenu = document.getElementById('btn-fechar-menu');
+    const menuOculto = document.getElementById('menu-oculto');
+    const logoutButton = document.getElementById('logout-button');
+    
+    const loginScreen = document.getElementById('login-screen');
+    const appContainer = document.getElementById('app-container');
+    const homeScreen = document.getElementById('home-screen');
+    const ofertaScreen = document.getElementById('oferta-screen');
+    const materialDetailContainer = document.getElementById('material-detail-container');
+    const detailImage = document.getElementById('detail-image');
+    const detailText = document.getElementById('detail-text');
+    const homeLink = document.getElementById('home-link');
+    const ofertaLink = document.getElementById('oferta-link');
+
+    const loginForm = document.getElementById('login-form');
+    const loginMessage = document.getElementById('login-message');
+    
+    const videoPlayerScreen = document.getElementById('video-player-screen');
+    const videoPlayer = document.getElementById('video-player');
+    const closePlayerBtn = document.getElementById('close-player-btn');
+    
+    // Elementos da nova tela de perfil
+    const profileScreen = document.getElementById('profile-screen');
+    const userInfoArea = document.getElementById('header-user-section');
+    const profileForm = document.getElementById('profile-form');
+    const saveMessage = document.getElementById('save-message');
+    const firstNameInput = document.getElementById('firstName');
+    const lastNameInput = document.getElementById('lastName');
+    const addressInput = document.getElementById('address');
+    const isBaptizedInput = document.getElementById('isBaptized');
+    const baptismDateInput = document.getElementById('baptismDate');
+    const conversionDateInput = document.getElementById('conversionDate');
+    const churchRoleSelect = document.getElementById('churchRole');
+    
+    // Elementos da foto de perfil
+    const profileImageInput = document.getElementById('profileImage');
+    const profilePreviewImg = document.getElementById('profile-preview-img');
+    const mainProfileImg = document.getElementById('main-profile-img');
+    const menuProfileImg = document.getElementById('menu-profile-img');
+
+    // Variáveis de estado
+    let db, auth, storage, userId;
+    let isFirebaseInitialized = false;
+    let appId;
+
+    /**
+     * Gerencia a exibição das telas da aplicação.
+     * @param {string} screenId - O ID da tela a ser exibida.
+     */
+    const showScreen = (screenId) => {
+        const screens = document.querySelectorAll('.app-screen');
+        screens.forEach(screen => {
+            screen.classList.add('hidden-screen');
+            screen.classList.remove('active-screen');
+        });
+        
+        const screenToShow = document.getElementById(screenId);
+        if (screenToShow) {
+            screenToShow.classList.remove('hidden-screen');
+            screenToShow.classList.add('active-screen');
+        }
+        
+        // Lógica para adicionar/remover o botão de voltar
+        let backButtonContainer = document.querySelector('.back-button-container');
+        const userArea = document.getElementById('header-user-section');
+        const headerLogo = document.getElementById('header-logo-section');
+        
+        if (screenId === 'material-detail-container' || screenId === 'profile-screen') {
+            if (userArea) userArea.style.display = 'none';
+            if (headerLogo) headerLogo.style.display = 'none';
+
+            if (!backButtonContainer) {
+                const header = document.querySelector('.container-header');
+                backButtonContainer = document.createElement('div');
+                backButtonContainer.classList.add('back-button-container');
+                backButtonContainer.innerHTML = `
+                    <button class="back-button">
+                        <i class="fa-solid fa-arrow-left"></i> Voltar
+                    </button>
+                `;
+                header.insertBefore(backButtonContainer, header.children[0]);
+                
+                document.querySelector('.back-button').addEventListener('click', () => {
+                    showScreen('home-screen');
+                });
+            }
+        } else {
+            if (userArea) userArea.style.display = 'flex';
+            if (headerLogo) headerLogo.style.display = 'flex';
+            if (backButtonContainer) {
+                backButtonContainer.remove();
+            }
+        }
+    };
+
+    const showLoginScreen = () => {
+        loginScreen.style.display = 'flex';
+        appContainer.style.display = 'none';
+        menuOculto.classList.remove('active');
+    };
+    
+    const showMainScreen = () => {
+        loginScreen.style.display = 'none';
+        appContainer.style.display = 'block';
+        showScreen('home-screen');
+    };
+    
+    const showVideoPlayer = (videoUrl) => {
+        const urlObj = new URL(videoUrl);
+        const videoId = urlObj.searchParams.get('v');
+        if (videoId) {
+            const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+            videoPlayer.src = embedUrl;
+            videoPlayerScreen.classList.remove('hidden');
+        }
+    };
+
+    const hideVideoPlayer = () => {
+        videoPlayer.src = '';
+        videoPlayerScreen.classList.add('hidden');
+    };
+
+    const showMaterialDetail = (imageUrl, text) => {
+        detailImage.src = imageUrl;
+        detailText.textContent = text;
+        showScreen('material-detail-container');
+    };
+
+    // Função para atualizar a UI com os dados do perfil do usuário
+    const updateProfileUI = (profileData) => {
+        const userNameDisplay = document.getElementById('user-name-display');
+        const menuUserName = document.getElementById('menu-user-name');
+        
+        if (profileData) {
+            const fullName = `${profileData.firstName || ''} ${profileData.lastName || ''}`.trim();
+            userNameDisplay.textContent = fullName || 'Usuário';
+            menuUserName.textContent = fullName || 'Usuário';
+            
+            // Preenche os campos do formulário
+            firstNameInput.value = profileData.firstName || '';
+            lastNameInput.value = profileData.lastName || '';
+            addressInput.value = profileData.address || '';
+            isBaptizedInput.checked = profileData.isBaptized || false;
+            baptismDateInput.value = profileData.baptismDate || '';
+            conversionDateInput.value = profileData.conversionDate || '';
+            churchRoleSelect.value = profileData.churchRole || '';
+            
+            // Atualiza as imagens de perfil
+            const imageUrl = profileData.profileImageUrl || 'https://placehold.co/60x60/E25402/FFFFFF';
+            mainProfileImg.src = imageUrl;
+            menuProfileImg.src = imageUrl;
+            profilePreviewImg.src = imageUrl;
+
+        } else {
+            userNameDisplay.textContent = 'Usuário';
+            menuUserName.textContent = 'Usuário';
+            // Limpa os campos do formulário se não houver dados
+            profileForm.reset();
+            // Volta para a imagem de placeholder
+            const placeholderUrl = 'https://placehold.co/60x60/E25402/FFFFFF';
+            mainProfileImg.src = placeholderUrl;
+            menuProfileImg.src = placeholderUrl;
+            profilePreviewImg.src = placeholderUrl;
+        }
+    };
+    
+    // Função para buscar os dados do perfil do usuário
+    const fetchUserProfile = async () => {
+        if (!db || !userId) return;
+
+        const userProfileRef = doc(db, `artifacts/${appId}/users/${userId}/profile`, 'profile_data');
+        onSnapshot(userProfileRef, (docSnap) => {
+            if (docSnap.exists()) {
+                const profileData = docSnap.data();
+                updateProfileUI(profileData);
+                console.log("Dados de perfil carregados.");
+            } else {
+                console.log("Nenhum dado de perfil encontrado.");
+                updateProfileUI(null);
+            }
+        }, (error) => {
+            console.error("Erro ao carregar dados do perfil:", error);
+            saveMessage.textContent = 'Erro ao carregar dados do perfil.';
+            saveMessage.style.color = '#fca5a5';
+        });
+    };
+    
+    // Lógica para abrir e fechar o menu lateral
+    if (btnAbrirMenu) {
+        btnAbrirMenu.addEventListener('click', () => {
+            menuOculto.classList.add('active');
+        });
+    }
+    if (btnFecharMenu) {
+        btnFecharMenu.addEventListener('click', () => {
+            menuOculto.classList.remove('active');
+        });
+    }
+    
+    // Lógica para fechar o player de vídeo
+    if (closePlayerBtn) {
+        closePlayerBtn.addEventListener('click', () => {
+            hideVideoPlayer();
+        });
+    }
+
+    // Lógica para navegar para a tela de perfil
+    if (userInfoArea) {
+        userInfoArea.addEventListener('click', () => {
+            showScreen('profile-screen');
+        });
+    }
+
+    // Lógica para pré-visualizar a imagem selecionada
+    if (profileImageInput) {
+        profileImageInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    profilePreviewImg.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    // Lógica para salvar os dados do perfil
+    if (profileForm) {
+        profileForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!db || !userId || !storage) {
+                saveMessage.textContent = 'Erro: Usuário não autenticado ou Firebase não inicializado.';
+                saveMessage.style.color = '#fca5a5';
+                return;
+            }
+
+            saveMessage.textContent = 'Salvando...';
+            saveMessage.style.color = '#fff';
+            
+            let imageUrl = profilePreviewImg.src.startsWith('https://') ? profilePreviewImg.src : null;
+
+            const file = profileImageInput.files[0];
+            if (file) {
+                try {
+                    // Referência para o arquivo no Firebase Storage
+                    const storageRef = ref(storage, `artifacts/${appId}/users/${userId}/profile/profile.jpg`);
+                    // Faz o upload da imagem
+                    const snapshot = await uploadBytes(storageRef, file);
+                    console.log('Imagem enviada com sucesso!');
+                    // Obtém o URL de download
+                    imageUrl = await getDownloadURL(snapshot.ref);
+                    console.log('URL da imagem:', imageUrl);
+                } catch (error) {
+                    console.error("Erro ao fazer o upload da imagem:", error);
+                    saveMessage.textContent = 'Erro ao fazer o upload da imagem. Tente novamente.';
+                    saveMessage.style.color = '#fca5a5';
+                    return;
+                }
+            }
+
+            const profileData = {
+                firstName: firstNameInput.value,
+                lastName: lastNameInput.value,
+                address: addressInput.value,
+                isBaptized: isBaptizedInput.checked,
+                baptismDate: baptismDateInput.value,
+                conversionDate: conversionDateInput.value,
+                churchRole: churchRoleSelect.value,
+                profileImageUrl: imageUrl || '', // Salva o URL da imagem
+            };
+
+            const userProfileRef = doc(db, `artifacts/${appId}/users/${userId}/profile`, 'profile_data');
+            try {
+                await setDoc(userProfileRef, profileData, { merge: true });
+                saveMessage.textContent = 'Perfil salvo com sucesso!';
+                saveMessage.style.color = '#86efac';
+            } catch (error) {
+                console.error("Erro ao salvar o perfil:", error);
+                saveMessage.textContent = 'Erro ao salvar o perfil. Tente novamente.';
+                saveMessage.style.color = '#fca5a5';
+            }
+        });
+    }
+
+    // Lógica para fazer logout
+    if (logoutButton) {
+        logoutButton.addEventListener('click', () => {
+            signOut(auth).then(() => {
+                console.log("Usuário desconectado.");
+                showLoginScreen();
+            }).catch((error) => {
+                console.error("Erro ao desconectar:", error);
+            });
+        });
+    }
+
+    // Lógica para lidar com o envio do formulário de login
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            loginMessage.textContent = "Autenticando...";
+            loginMessage.style.color = '#fff';
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                loginMessage.textContent = "Login bem-sucedido!";
+                loginMessage.style.color = '#86efac';
+            } catch (error) {
+                console.error("Erro de login:", error);
+                let errorMessage = "Erro de login. Verifique seu email e senha.";
+                if (error.code === 'auth/invalid-email') {
+                    errorMessage = "O endereço de e-mail está mal formatado.";
+                } else if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+                    errorMessage = "Email ou senha incorretos.";
+                }
+                loginMessage.textContent = errorMessage;
+                loginMessage.style.color = '#fca5a5';
+            }
+        });
+    }
+
+    // Lógica para a navegação do rodapé
+    if (homeLink) {
+        homeLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            showScreen('home-screen');
+        });
+    }
+    if (ofertaLink) {
+        ofertaLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            showScreen('oferta-screen');
+        });
+    }
+
+    
+    // Função para renderizar as aulas na UI
+    const renderAulas = (docs) => {
+        if (docs.length === 0) {
+            videoListContainer.innerHTML = '<div class="no-classes-message">Nenhuma aula encontrada.</div>';
+            return;
+        }
+        videoListContainer.innerHTML = '';
+        docs.forEach(doc => {
+            const data = doc.data();
+            
+            const videoItem = document.createElement('div');
+            videoItem.classList.add('video-item');
+            videoItem.setAttribute('data-video-url', data.videoUrl || '');
+            videoItem.innerHTML = `
+                <img class="video-thumbnail" src="${data.imageUrl || 'https://placehold.co/640x360/06224A/E25402?text=Sem+Imagem'}" alt="Thumbnail do vídeo">
+                <div class="video-details">
+                    <h3>${data.text || 'Título não encontrado'}</h3>
+                </div>
+            `;
+            
+            videoItem.addEventListener('click', () => {
+                const videoUrl = videoItem.getAttribute('data-video-url');
+                if (videoUrl) {
+                    showVideoPlayer(videoUrl);
+                }
+            });
+
+            videoListContainer.appendChild(videoItem);
+        });
+    };
+
+    // Função para renderizar material de apoio na UI
+    const renderMaterialApoio = (docs) => {
+        if (docs.length === 0) {
+            materialGridContainer.innerHTML = '<div class="no-classes-message">Nenhum material de apoio encontrado.</div>';
+            return;
+        }
+        materialGridContainer.innerHTML = '';
+        docs.forEach(doc => {
+            const data = doc.data();
+            
+            const imageUrl = data.imageUrl || 'https://placehold.co/150x150/06224A/E25402?text=Sem+Imagem';
+            const text = data.text || 'Sem Título';
+            
+            const materialItem = document.createElement('div');
+            materialItem.classList.add('material-item');
+            materialItem.innerHTML = `
+                <img class="image-size" src="${imageUrl}" alt="${text}">
+            `;
+
+            materialItem.addEventListener('click', () => {
+                showMaterialDetail(imageUrl, text);
+            });
+            
+            materialGridContainer.appendChild(materialItem);
+        });
+    };
+
+    // Função para renderizar ofertas na UI
+    const renderOfertas = (docs) => {
+        if (docs.length === 0) {
+            ofertasListContainer.innerHTML = '<div class="no-classes-message">Nenhuma oferta encontrada.</div>';
+            return;
+        }
+        ofertasListContainer.innerHTML = '';
+        docs.forEach(doc => {
+            const data = doc.data();
+            
+            const ofertaCard = document.createElement('div');
+            ofertaCard.classList.add('oferta-card');
+
+            const imageUrl = data.imageUrl || 'https://placehold.co/400x200/06224A/E25402?text=Sem+Imagem';
+            const title = data.title || 'Título não encontrado';
+            const text = data.text || 'Descrição não encontrada';
+            const paymentLink = data.paymentLink;
+
+            let cardContent = `
+                <h3>${title}</h3>
+                <p>${text}</p>
+            `;
+
+            // Adiciona link e imagem se o link de pagamento existir
+            if (paymentLink) {
+                cardContent = `
+                    <a href="${paymentLink}" target="_blank">
+                        <img src="${imageUrl}" alt="${title}" style="cursor: pointer;">
+                    </a>
+                    ${cardContent}
+                `;
+            } else {
+                cardContent = `
+                    <img src="${imageUrl}" alt="${title}">
+                    ${cardContent}
+                `;
+            }
+
+            ofertaCard.innerHTML = cardContent;
+
+            ofertasListContainer.appendChild(ofertaCard);
+        });
+    };
+    
+    const fetchAndRenderAulas = (appId) => {
+        if (!db) return;
+
+        const collectionPath = `artifacts/${appId}/public/data/aulas`;
+        const aulasRef = collection(db, collectionPath);
+        const q = query(aulasRef);
+
+        onSnapshot(q, (querySnapshot) => {
+            const docs = [];
+            querySnapshot.forEach((doc) => {
+                docs.push(doc);
+            });
+            renderAulas(docs);
+        }, (error) => {
+            console.error("Erro ao carregar as aulas do Firestore:", error);
+            videoListContainer.innerHTML = '<div class="error-message">Erro ao carregar as aulas. Tente novamente mais tarde.</div>';
+        });
+    };
+
+    const fetchAndRenderMaterialApoio = (appId) => {
+        if (!db) return;
+        
+        const collectionPath = `artifacts/${appId}/public/data/images`;
+        const materialRef = collection(db, collectionPath);
+        const q = query(materialRef);
+
+        onSnapshot(q, (querySnapshot) => {
+            const docs = [];
+            querySnapshot.forEach((doc) => {
+                docs.push(doc);
+            });
+            renderMaterialApoio(docs);
+        }, (error) => {
+            console.error("Erro ao carregar o material de apoio do Firestore:", error);
+            materialGridContainer.innerHTML = '<div class="error-message">Erro ao carregar o material de apoio. Tente novamente mais tarde.</div>';
+        });
+    };
+
+    const fetchAndRenderOfertas = (appId) => {
+        if (!db) return;
+
+        const collectionPath = `artifacts/${appId}/public/data/ofertas`;
+        const ofertasRef = collection(db, collectionPath);
+        const q = query(ofertasRef);
+
+        onSnapshot(q, (querySnapshot) => {
+            const docs = [];
+            querySnapshot.forEach((doc) => {
+                docs.push(doc);
+            });
+            renderOfertas(docs);
+        }, (error) => {
+            console.error("Erro ao carregar as ofertas do Firestore:", error);
+            ofertasListContainer.innerHTML = '<div class="error-message">Erro ao carregar as ofertas. Tente novamente mais tarde.</div>';
+        });
+    };
+
+
+   const setupFirebase = () => {
+        if (isFirebaseInitialized) return;
+
+        try {
+            let firebaseConfig;
+
+            if (typeof __firebase_config !== 'undefined' && typeof __app_id !== 'undefined') {
+                firebaseConfig = JSON.parse(__firebase_config);
+                appId = __app_id;
+            } else {
+                firebaseConfig = {
+                    apiKey: "AIzaSyArteycUkaN5-dClQ28oHSl-NoiL-s4NaY",
+                    authDomain: "app-obpc-49823.firebaseapp.com",
+                    projectId: "app-obpc-49823",
+                    storageBucket: "app-obpc-49823.firebasestorage.app",
+                    messagingSenderId: "690083146419",
+                    appId: "1:690083146419:web:c03301f1aca7dd2d299ec6",
+                    measurementId: "G-KJPSSSC575"
+                };
+                appId = "default-app-id";
+            }
+            
+            const app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+            storage = getStorage(app);
+            isFirebaseInitialized = true;
+
+            // Aguarda a autenticação antes de carregar o conteúdo
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    userId = user.uid;
+                    
+                    // Crie uma Promise para carregar o primeiro conjunto de dados
+                    // Quando a primeira coleção for carregada, a tela principal é exibida
+                    const loadInitialData = new Promise((resolve, reject) => {
+                        const collectionPath = `artifacts/${appId}/public/data/aulas`;
+                        const aulasRef = collection(db, collectionPath);
+                        const q = query(aulasRef);
+
+                        onSnapshot(q, (querySnapshot) => {
+                            const docs = [];
+                            querySnapshot.forEach((doc) => {
+                                docs.push(doc);
+                            });
+                            renderAulas(docs);
+                            resolve();
+                        }, (error) => {
+                            console.error("Erro ao carregar as aulas do Firestore:", error);
+                            videoListContainer.innerHTML = '<div class="error-message">Erro ao carregar as aulas. Tente novamente mais tarde.</div>';
+                            reject(error);
+                        });
+                    });
+
+                    // Só mostra a tela principal APÓS o carregamento inicial bem-sucedido
+                    loadInitialData.then(() => {
+                        showMainScreen();
+                        // Carregue os outros dados em segundo plano
+                        fetchAndRenderMaterialApoio(appId);
+                        fetchAndRenderOfertas(appId);
+                        fetchUserProfile();
+                    }).catch(() => {
+                        // Se houver erro, ainda mostra a tela de login ou uma mensagem de erro
+                        showLoginScreen();
+                        loginMessage.textContent = "Erro ao carregar dados. Tente novamente.";
+                        loginMessage.style.color = '#fca5a5';
+                    });
+
+                } else {
+                    userId = null;
+                    showLoginScreen();
+                }
+            });
+
+        } catch (e) {
+            console.error("Falha ao inicializar o Firebase. Verifique sua configuração.", e);
+            const errorMessageDiv = '<div class="error-message">Falha ao conectar ao banco de dados. Verifique a configuração do Firebase.</div>';
+            videoListContainer.innerHTML = errorMessageDiv;
+            materialGridContainer.innerHTML = errorMessageDiv;
+        }
+    };
+
+    setupFirebase();
+});
+
+        document.addEventListener("deviceready", function () {
+            if (navigator && navigator.splashscreen) {
+                navigator.splashscreen.hide();
+            } else {
+                console.log("Rodando no navegador, sem splashscreen.");
+            }
+        }, false);
+
+        </script>
+    </body>
+</html>
