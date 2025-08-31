@@ -2,18 +2,18 @@
   "name": "OBPC School",
   "short_name": "OBPC",
   "description": "Aplicativo oficial da OBPC School",
-  "start_url": "/index.html",
+  "start_url": "index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#1c4a78",
   "icons": [
     {
-      "src": "images/icon.png",
+      "src": "img/icon.png",
       "sizes": "192x192",
       "type": "img/png"
     },
     {
-      "src": "img/icon.png",
+      "src": "img/icon-a.png",
       "sizes": "512x512",
       "type": "image/png"
     }
