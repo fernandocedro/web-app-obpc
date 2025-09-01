@@ -5,6 +5,7 @@
         <meta name="msapplication-tap-highlight" content="no">
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
         <meta name="color-scheme" content="light dark">
+        <link rel="icon" type="image/x-icon" href="favicon.ico">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
         <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
         <title>OBPC School - Dashboard Admin</title>
@@ -819,8 +820,35 @@
                     try {
                         let docPath;
                         if (collectionName === 'prayerRequests') {
-                            // Caminho para pedidos de oração
-                            docPath = `artifacts/${appId}/users/${auth.currentUser.uid}/${collectionName}/${item.id}`;
+                            // Caminho para pedidos de oração individuais - usa o userId específico do pedido
+                            const userId = item.userId || auth.currentUser.uid;
+                            docPath = `artifacts/${appId}/users/${userId}/${collectionName}/${item.id}`;
+                        } else if (collectionName === 'centralizedPrayerRequests') {
+                            // Caminho para pedidos de oração centralizados (NOVO)
+                            docPath = `artifacts/${appId}/public/data/allPrayerRequests/${item.id}`;
+                            
+                            // Também tenta excluir da coleção pessoal do usuário
+                            if (item.userId) {
+                                try {
+                                    // Busca e exclui o documento correspondente na coleção pessoal
+                                    const userPrayerQuery = query(
+                                        collection(db, `artifacts/${appId}/users/${item.userId}/prayerRequests`),
+                                        orderBy("createdAt", "desc")
+                                    );
+                                    const userPrayerSnapshot = await getDocs(userPrayerQuery);
+                                    
+                                    userPrayerSnapshot.docs.forEach(async (userDoc) => {
+                                        const userData = userDoc.data();
+                                        // Compara conteúdo para encontrar o documento correspondente
+                                        if (userData.request === item.request && userData.name === item.name) {
+                                            await deleteDoc(doc(db, `artifacts/${appId}/users/${item.userId}/prayerRequests/${userDoc.id}`));
+                                            console.log("Documento da coleção pessoal também excluído!");
+                                        }
+                                    });
+                                } catch (userError) {
+                                    console.log("Não foi possível excluir da coleção pessoal:", userError.message);
+                                }
+                            }
                         } else {
                             // Caminho para outros documentos
                             docPath = `artifacts/${appId}/public/data/${collectionName}/${item.id}`;
@@ -1243,38 +1271,99 @@
                         });
                     });
 
-                    // Listener para Pedidos de Oração
+                    // Função para verificar se o usuário atual é admin
+                    const isCurrentUserAdmin = () => {
+                        return auth.currentUser && auth.currentUser.uid === 'XwznyS4UvJZd9ZFxSeoBsdftChl1';
+                    };
+
+                    // Listener para Pedidos de Oração (usando coleção centralizada)
                     const prayerRequestsQuery = query(
-                        collection(db, `artifacts/${appId}/users/${auth.currentUser.uid}/prayerRequests`),
+                        collection(db, `artifacts/${appId}/public/data/allPrayerRequests`),
                         orderBy("createdAt", "desc")
                     );
+                    
+                    console.log("Iniciando listener de pedidos de oração...");
+                    console.log("Query path:", `artifacts/${appId}/public/data/allPrayerRequests`);
+                    
                     onSnapshot(prayerRequestsQuery, (snapshot) => {
-                        prayerRequestsList.innerHTML = '';
-                        if (snapshot.empty) {
-                            prayerRequestsList.innerHTML = '<p style="text-align:center;">Nenhum pedido de oração encontrado.</p>';
-                            return;
-                        }
-                        snapshot.forEach((docSnap) => {
-                            const prayer = docSnap.data();
-                            const date = prayer.createdAt.toDate().toLocaleDateString();
-                            const time = prayer.createdAt.toDate().toLocaleTimeString();
-                            const prayerHtml = `
-                                <div class="prayer-request-card">
-                                    <h3>De: ${prayer.name}</h3>
-                                    <p><b>Pedido:</b> ${prayer.request}</p>
-                                    <p class="prayer-meta">Recebido em: ${date} às ${time}</p>
-                                    <button class="delete-prayer-button" data-id="${docSnap.id}" data-type="prayerRequest">Excluir</button>
+                        try {
+                            console.log("Snapshot recebido:", snapshot.size, "documentos");
+                            console.log("Admin check:", isCurrentUserAdmin());
+                            console.log("Current user UID:", auth.currentUser?.uid);
+                            
+                            prayerRequestsList.innerHTML = '';
+                            
+                            if (!isCurrentUserAdmin()) {
+                                prayerRequestsList.innerHTML = '<p style="text-align:center;">Acesso negado. Apenas administradores podem ver todos os pedidos de oração.</p>';
+                                return;
+                            }
+                            
+                            if (snapshot.empty) {
+                                console.log("Snapshot está vazio");
+                                prayerRequestsList.innerHTML = `
+                                    <div style="text-align:center; padding: 20px;">
+                                        <p>Nenhum pedido de oração encontrado na coleção centralizada.</p>
+                                        <p style="font-size: 0.9em; color: #888; margin-top: 10px;">
+                                            <strong>Debug Info:</strong><br>
+                                            Caminho da query: artifacts/${appId}/public/data/allPrayerRequests<br>
+                                            Usuário admin: ${auth.currentUser?.uid}<br>
+                                            Timestamp: ${new Date().toLocaleString()}
+                                        </p>
+                                        <p style="font-size: 0.8em; color: #666; margin-top: 10px;">
+                                            Teste enviando um novo pedido de oração pelo app para ver se aparece aqui.
+                                        </p>
+                                    </div>
+                                `;
+                                return;
+                            }
+                            
+                            console.log("Processando", snapshot.size, "pedidos de oração");
+                            snapshot.forEach((docSnap) => {
+                                const prayer = docSnap.data();
+                                console.log("Pedido de oração:", prayer);
+                                const date = prayer.createdAt.toDate().toLocaleDateString();
+                                const time = prayer.createdAt.toDate().toLocaleTimeString();
+                                const prayerHtml = `
+                                    <div class="prayer-request-card">
+                                        <h3>De: ${prayer.name}</h3>
+                                        <p><b>Pedido:</b> ${prayer.request}</p>
+                                        <p class="prayer-meta">Recebido em: ${date} às ${time}</p>
+                                        <p class="prayer-meta" style="font-size: 0.75em; color: #666;">ID do Usuário: ${prayer.userId || prayer.uid}</p>
+                                        <button class="delete-prayer-button" data-id="${docSnap.id}" data-user-id="${prayer.userId || prayer.uid}" data-type="centralizedPrayerRequest">Excluir</button>
+                                    </div>
+                                `;
+                                prayerRequestsList.insertAdjacentHTML('beforeend', prayerHtml);
+                            });
+                            
+                            document.querySelectorAll('.delete-prayer-button').forEach(button => {
+                                button.addEventListener('click', (e) => {
+                                    e.preventDefault();
+                                    const docId = e.target.dataset.id;
+                                    const userId = e.target.dataset.userId;
+                                    openConfirmationModal({ id: docId, userId }, 'centralizedPrayerRequests');
+                                });
+                            });
+                            
+                        } catch (error) {
+                            console.error("Erro ao processar pedidos de oração:", error);
+                            prayerRequestsList.innerHTML = `
+                                <div style="text-align:center; padding: 20px;">
+                                    <p>Erro ao carregar pedidos de oração.</p>
+                                    <p style="font-size: 0.9em; color: #666;">Erro: ${error.message}</p>
                                 </div>
                             `;
-                            prayerRequestsList.insertAdjacentHTML('beforeend', prayerHtml);
-                        });
-                        document.querySelectorAll('.delete-prayer-button').forEach(button => {
-                            button.addEventListener('click', (e) => {
-                                e.preventDefault();
-                                const docId = e.target.dataset.id;
-                                openConfirmationModal({ id: docId }, 'prayerRequests');
-                            });
-                        });
+                        }
+                    }, (error) => {
+                        console.error("Erro no listener de pedidos de oração:", error);
+                        prayerRequestsList.innerHTML = `
+                            <div style="text-align:center; padding: 20px;">
+                                <p>Erro ao conectar com os pedidos de oração.</p>
+                                <p style="font-size: 0.9em; color: #666;">Erro: ${error.message}</p>
+                                <p style="font-size: 0.8em; color: #555; margin-top: 10px;">
+                                    Verifique se as regras do Firestore estão configuradas corretamente para permitir acesso do admin à coleção centralizada.
+                                </p>
+                            </div>
+                        `;
                     });
 
                     // NOVO: Listener para Plano de Leitura

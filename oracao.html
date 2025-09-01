@@ -320,7 +320,7 @@
       getAuth, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence 
     } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { 
-      getFirestore, collection, addDoc, doc, getDoc, setDoc
+      getFirestore, collection, addDoc, doc, getDoc, setDoc, serverTimestamp
     } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     // 🔥 Configuração Firebase
@@ -424,19 +424,51 @@
       }
       
       try {
-        await addDoc(collection(db, "artifacts", appId, "users", currentUser.uid, "prayerRequests"), {
+        console.log("=== ENVIANDO PEDIDO DE ORAÇÃO ===");
+        console.log("Nome:", name);
+        console.log("Pedido:", request);
+        console.log("User UID:", currentUser.uid);
+        console.log("App ID:", appId);
+        
+        const prayerData = {
           uid: currentUser.uid,
           name,
           request,
-          createdAt: new Date()
-        });
+          createdAt: serverTimestamp()
+        };
+        
+        console.log("Prayer Data:", prayerData);
+        
+        // Salva na coleção pessoal do usuário
+        console.log("Salvando na coleção pessoal...");
+        const personalRef = await addDoc(collection(db, "artifacts", appId, "users", currentUser.uid, "prayerRequests"), prayerData);
+        console.log("Salvo na coleção pessoal com ID:", personalRef.id);
+        
+        // Salva na coleção centralizada para admins (NOVO)
+        console.log("Salvando na coleção centralizada...");
+        const centralizedPath = `artifacts/${appId}/public/data/allPrayerRequests`;
+        console.log("Caminho centralizado:", centralizedPath);
+        
+        const centralizedData = {
+          ...prayerData,
+          userId: currentUser.uid // Adiciona referência ao usuário
+        };
+        console.log("Dados centralizados:", centralizedData);
+        
+        const centralizedRef = await addDoc(collection(db, centralizedPath), centralizedData);
+        console.log("Salvo na coleção centralizada com ID:", centralizedRef.id);
         
         alert("Seu pedido de oração foi enviado com sucesso!");
         prayerNameInput.value = "";
         prayerRequestInput.value = "";
+        
+        console.log("=== PEDIDO ENVIADO COM SUCESSO ===");
       } catch (error) {
-        console.error("Erro ao salvar pedido de oração: ", error);
-        alert("Ocorreu um erro ao enviar seu pedido. Por favor, tente novamente.");
+        console.error("=== ERRO AO SALVAR PEDIDO DE ORAÇÃO ===");
+        console.error("Erro completo:", error);
+        console.error("Código do erro:", error.code);
+        console.error("Mensagem do erro:", error.message);
+        alert("Ocorreu um erro ao enviar seu pedido. Por favor, tente novamente. Erro: " + error.message);
       }
     });
   </script>
