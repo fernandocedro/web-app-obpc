@@ -158,26 +158,42 @@
                 color: #ccc;
             }
 
-            .container-footer {
-                display: flex;
-                justify-content: space-around;
-                background-color: #000;
-                padding: 10px 0;
+            /* Estilos do rodapé */
+            .container-menun-inferior {
                 position: fixed;
                 bottom: 0;
                 width: 100%;
+                background-color: transparent;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 10px 0;
                 z-index: 10;
             }
 
+            .container-footer {
+                display: flex;
+                justify-content: space-around;
+                background-color: rgba(6, 34, 74, 0.9);
+                padding: 10px 0;
+                position: fixed;
+                border-radius: 15px;
+                bottom: 40px;
+                width: 85%;
+                z-index: 10;
+                box-shadow:  rgba(226, 84, 2, 0.3) 0px 4px 15px;
+            }
             .container-footer a {
                 color: white;
                 font-size: 1.5rem;
                 padding: 10px;
             }
-
             .container-footer i {
                 color: #E25402;
                 font-size: 1.5rem;
+            }
+            .container-footer i {
+                color: #E25402; font-size: 1.5rem;
             }
 
             .menu-oculto {
@@ -215,6 +231,14 @@
                 border-bottom: 1px solid rgba(255, 255, 255, 0.1);
                 display: flex;
                 align-items: center;
+            }
+
+            .menu-opcoes-barra:hover { background-color: rgba(255, 255, 255, 0.1); }
+
+            .menu-opcoes-barra a {
+                text-decoration: none;
+                color: white;
+                width: 100%;
             }
 
             .menu-opcoes-barra i {
@@ -269,21 +293,23 @@
                 </div>
             </div>
 
-            <footer class="container-footer">
-                <div class="home">
-                    <a href="index.html"><i class="fa-solid fa-house-chimney-crack"></i></a>
-                </div>
-                <div class="oferta">
-                    <a href="index.html"><i class="fa-solid fa-hand-holding-dollar"></i></a>
-                </div>
-                <div class="datas">
-                    <a href="events.html"><i class="fa-solid fa-calendar-day"></i></a>
-                </div>
-                <div class="mais">
-                    <i class="fa-solid fa-bars" id="btn-abrir-menu"></i>
-                </div>
-            </footer>
-        </div>
+           <div class="container-menun-inferior">
+               <footer class="container-footer">
+                    <div class="home">
+                        <a href="index.html" id="home-link"><i class="fa-solid fa-house"></i></a>
+                    </div>
+                    <div class="oferta">
+                        <a href="generoso.html" ><i class="fa-solid fa-heart"></i></i></a>
+                    </div>
+                    <div class="datas">
+                        <a href="events.html"><i class="fa-solid fa-calendar-day"></i></a>
+                    </div>
+                    <div class="mais">
+                        <i class="fa-solid fa-bars" id="btn-abrir-menu"></i>
+                    </div>
+                </footer>
+            </div>
+  </div>
 
         <div class="menu-oculto" id="menu-oculto">
             <div>
@@ -291,19 +317,10 @@
                     x
                 </div>
                 <div class="menu-opcoes">
-                    <a href="biblia.html">
-                        <div class="menu-opcoes-barra"><i class="fa-solid fa-book-bible"></i> Bíblia</div>
-                    </a>
-                    <a href="notes.html">
-                    <div class="menu-opcoes-barra"><i class="fa-solid fa-note-sticky"></i> Anotações</div>
-                    </a>
-                    <a href="leitura-diaria.html">
-                    <div class="menu-opcoes-barra"><i class="fa-regular fa-calendar-check"></i> Leitura Diaria</div>
-                    </a>
-                     <a href="oracao.html">
-                    <div class="menu-opcoes-barra"><i class="fa-solid fa-hands-praying"></i> Oração</div>
-                    </a>
-                    <div class="menu-opcoes-barra"><i class="fa-solid fa-file-circle-question"></i> Dúvidas</div>
+                  <div class="menu-opcoes-barra"><a href="biblia.html"><i class="fa-solid fa-book-bible"></i> Bíblia </a></div>
+                    <div class="menu-opcoes-barra"><a href="notes.html"><i class="fa-solid fa-note-sticky"></i> Anotações</a></div>
+                    <div class="menu-opcoes-barra"><a href="leitura-diaria.html"><i class="fa-regular fa-calendar-check"></i> Leitura Diaria</a></div>
+                    <div class="menu-opcoes-barra"><i class="fa-solid fa-hands-praying"></i><a href="oracao.html"> Oração</a></div>
                 </div>
             </div>
             <div class="menu-footer">

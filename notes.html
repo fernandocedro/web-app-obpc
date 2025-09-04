@@ -125,12 +125,39 @@
     background-color: rgba(244, 128, 44, 0.2); 
   }
 
-  /* footer fixo */
-  .container-footer {
-    display: flex; justify-content: space-around;
-    background: #000; padding: 10px 0; position: fixed; bottom: 0; width: 100%;
-    z-index: 99; 
-  }
+            .container-menun-inferior {
+                position: fixed;
+                bottom: 0;
+                width: 100%;
+                background-color: transparent;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 10px 0;
+                z-index: 10;
+            }
+
+            .container-footer {
+                display: flex;
+                justify-content: space-around;
+                background-color: rgba(6, 34, 74, 0.9);
+                padding: 10px 0;
+                position: fixed;
+                border-radius: 15px;
+                bottom: 40px;
+                width: 85%;
+                z-index: 10;
+                box-shadow:  rgba(226, 84, 2, 0.3) 0px 4px 15px;
+            }
+            .container-footer a {
+                color: white;
+                font-size: 1.5rem;
+                padding: 10px;
+            }
+            .container-footer i {
+                color: #E25402;
+                font-size: 1.5rem;
+            }
   .container-footer i { color: #E25402; font-size: 1.5rem; }
   
   /* menu lateral */
@@ -147,9 +174,15 @@
   }
   .menu-opcoes { margin-top: 10px; flex-grow: 1; }
   .menu-opcoes-barra { 
-    padding: 10px 20px; color: #fff; font-size: 1.1rem; cursor: pointer;
-    display: flex; align-items: center; gap: 10px;
+    padding: 10px 20px;
+    color: #fff;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
     transition: background-color 0.3s ease;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
   .menu-opcoes-barra:hover { background-color: rgba(255, 255, 255, 0.1); }
   .menu-opcoes-barra i { color: #E25402; }
@@ -236,7 +269,7 @@
   /* Botão de Ação Flutuante (FAB) */
   .fab {
     position: fixed;
-    bottom: 70px;
+    bottom: 100px;
     left: 20px;
     background-color: #E25402; 
     color: #fff;
@@ -273,12 +306,22 @@
       </div>
     </div>
 
-    <footer class="container-footer">
-      <div class="home"><a href="index.html"><i class="fa-solid fa-house-chimney-crack"></i></a></div>
-      <div class="oferta"><a href="generoso.html"><i class="fa-solid fa-hand-holding-dollar"></i></a></div>
-      <div class="datas"><a href="events.html"><i class="fa-solid fa-calendar-day"></i></a></div>
-      <div class="mais"><i class="fa-solid fa-bars" id="btn-abrir-menu"></i></div>
-    </footer>
+     <div class="container-menun-inferior">
+            <footer class="container-footer">
+                <div class="home">
+                    <a href="index.html" id="home-link"><i class="fa-solid fa-house"></i></a>
+                </div>
+                <div class="oferta">
+                    <a href="generoso.html" ><i class="fa-solid fa-heart"></i></i></a>
+                </div>
+                <div class="datas">
+                    <a href="events.html"><i class="fa-solid fa-calendar-day"></i></a>
+                </div>
+                <div class="mais">
+                    <i class="fa-solid fa-bars" id="btn-abrir-menu"></i>
+                </div>
+            </footer>
+        </div>
   </div>
 
   <div class="menu-oculto" id="menu-oculto">
