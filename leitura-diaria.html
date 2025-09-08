@@ -167,19 +167,26 @@
         .btn-fecharOculto { 
             font-size: 2rem; color: #fff; text-align: right; padding: 10px 20px; cursor: pointer;
         }
-        .menu-opcoes { margin-top: 10px; flex-grow: 1; }
-        .menu-opcoes-barra { 
-            padding: 10px 20px;
-            color: #fff;
-            font-size: 1.1rem; 
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: background-color 0.3s ease;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .menu-opcoes-barra:hover { background-color: rgba(255, 255, 255, 0.1); }
-        .menu-opcoes-barra i { color: #E25402; }
+         .menu-opcoes-barra {
+                color: white;
+                padding: 15px;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                display: flex;
+                align-items: center;
+            }
+
+            .menu-opcoes-barra:hover { background-color: rgba(255, 255, 255, 0.1); }
+
+            .menu-opcoes-barra a {
+                text-decoration: none;
+                color: white;
+                width: 100%;
+            }
+
+            .menu-opcoes-barra i {
+                margin-right: 10px;
+                color: #E25402;
+            }
         
         .menu-footer {
             display: flex; flex-direction: column; gap: 15px; padding: 10px 20px;
@@ -244,6 +251,7 @@
                 <a href="notes.html"><div class="menu-opcoes-barra"><i class="fa-solid fa-note-sticky"></i> Anotações</div></a>
                 <a href="leitura-diaria.html"><div class="menu-opcoes-barra"><i class="fa-regular fa-calendar-check"></i> Leitura Diária</div></a>
                 <a href="oracao.html"><div class="menu-opcoes-barra"><i class="fa-solid fa-hands-praying"></i> Oração</div></a>
+                <div class="menu-opcoes-barra"><a href="videos.html"><i class="fa-solid fa-circle-play"></i> vídeos </a></div>
             </div>
         </div>
         <div class="menu-footer">
