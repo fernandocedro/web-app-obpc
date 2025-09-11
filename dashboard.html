@@ -534,6 +534,7 @@
                     <li><a href="#" id="add-reading-plan-link"><i class="fa-regular fa-calendar-check"></i> Adicionar Leitura</a></li>
                     <li><a href="#" id="manage-reading-plans-link"><i class="fa-solid fa-book-open"></i> Gerenciar Leitura</a></li>
                     <li><a href="#" id="manage-prayer-requests-link"><i class="fa-solid fa-hands-praying"></i> Pedidos de Oração</a></li>
+                    <li><a href="#" id="manage-user-screen"><i class="fa-solid fa-hands-praying"></i> Gerenciar Usuários</a></li>
                     <li><a href="#" id="logout-button"><i class="fa-solid fa-right-from-bracket"></i> Sair</a></li>
                 </ul>
             </div>
@@ -551,6 +552,10 @@
                             <div class="form-group">
                                 <label for="admin-video-url">URL do Vídeo</label>
                                 <input type="url" id="admin-video-url" name="admin-video-url" placeholder="https://..." required>
+                            </div>
+                             <div class="form-group">
+                                <label for="admin-serie">Série de Mensagens</label>
+                                <input type="text" id="admin-serie" name="admin-serie" placeholder="Ex: Série sobre Oração" required>
                             </div>
                             <div class="form-group">
                                 <label for="image-file">Imagem de Miniatura</label>
@@ -702,6 +707,12 @@
                     </div>
                 </div>
 
+                <div id="manage-user-screen" class="list-container" style="display: none;">
+                    <h2>Gerenciamento de  Usuarios</h2>
+                    <div id="users-profile-list">
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -762,7 +773,7 @@
                 const addOfertaScreen = document.getElementById('add-oferta-screen');
                 const ofertasListScreen = document.getElementById('ofertas-list-screen');
                 const manageEventsScreen = document.getElementById('manage-events-screen');
-                const prayerRequestsScreen = document.getElementById('prayer-requests-screen');
+                const usersProfilesScreen = document.getElementById('users-profile-screen');
                 const addReadingPlanScreen = document.getElementById('add-reading-plan-screen');
                 const readingPlansListScreen = document.getElementById('reading-plans-list-screen');
                 const videosGrid = document.getElementById('videos-grid');
@@ -770,6 +781,8 @@
                 const ofertasGrid = document.getElementById('ofertas-grid');
                 const eventsGrid = document.getElementById('events-grid');
                 const prayerRequestsList = document.getElementById('prayer-requests-list');
+                const prayerRequestsScreen = document.getElementById('prayer-requests-screen');
+                const usersProfileList = document.getElementById('users-profile-list');
                 const readingPlansList = document.getElementById('reading-plans-list');
                 const confirmationModal = document.getElementById('confirmation-modal');
                 const confirmDeleteButton = document.getElementById('confirm-delete-button');
@@ -779,7 +792,7 @@
                 let itemToDelete;
 
                 const showScreen = (screenToShow) => {
-                    const screens = [addClassScreen, videosListScreen, imageUploadScreen, imageListScreen, addOfertaScreen, ofertasListScreen, manageEventsScreen, prayerRequestsScreen, addReadingPlanScreen, readingPlansListScreen];
+                    const screens = [addClassScreen, videosListScreen, imageUploadScreen, imageListScreen, addOfertaScreen, ofertasListScreen, manageEventsScreen, prayerRequestsScreen, usersProfilesScreen, addReadingPlanScreen, readingPlansListScreen];
                     screens.forEach(screen => {
                         if (screen) {
                             screen.style.display = 'none';
@@ -826,7 +839,6 @@
                         } else if (collectionName === 'centralizedPrayerRequests') {
                             // Caminho para pedidos de oração centralizados (NOVO)
                             docPath = `artifacts/${appId}/public/data/allPrayerRequests/${item.id}`;
-                            
                             // Também tenta excluir da coleção pessoal do usuário
                             if (item.userId) {
                                 try {
@@ -904,6 +916,19 @@
                     e.preventDefault();
                     showScreen(prayerRequestsScreen);
                 });
+
+                // Listener para o link "Gerenciar Usuários"
+                const manageUserScreenLink = document.getElementById('manage-user-screen');
+                const manageUserScreenDiv = document.getElementById('manage-user-screen');
+
+                if (manageUserScreenLink) {
+                    manageUserScreenLink.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        showScreen(manageUserScreenDiv);
+                        renderUsersList(); // Chame a função para renderizar a lista de usuários
+                    });
+                }
+                
                 addReadingPlanLink.addEventListener('click', (e) => {
                     e.preventDefault();
                     showScreen(addReadingPlanScreen);
@@ -927,20 +952,67 @@
                 }
                 
                 // Add new class form submission
-                adminForm.addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    loadingMessage.style.display = 'block';
-                    adminMessage.textContent = '';
-                    const videoUrl = document.getElementById('admin-video-url').value;
-                    const imageFile = document.getElementById('image-file').files[0];
-                    const text = document.getElementById('admin-text').value;
+                // Add new class form submission
+adminForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    loadingMessage.style.display = 'block';
+    adminMessage.textContent = '';
+    const videoUrl = document.getElementById('admin-video-url').value;
+    const imageFile = document.getElementById('image-file').files[0];
+    const text = document.getElementById('admin-text').value;
 
-                    if (!videoUrl || !imageFile || !text) {
-                        adminMessage.textContent = "Por favor, preencha todos os campos.";
-                        adminMessage.style.color = '#fca5a5';
-                        loadingMessage.style.display = 'none';
-                        return;
-                    }
+    // A linha que você adicionou
+    const serie = document.getElementById('admin-serie').value;
+
+    // Add new class form submission
+adminForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    loadingMessage.style.display = 'block';
+    adminMessage.textContent = '';
+
+    const videoUrl = document.getElementById('admin-video-url').value;
+    const imageFile = document.getElementById('image-file').files[0];
+    const description = document.getElementById('admin-text').value;
+
+    // Pega o valor do novo campo "série"
+    const serie = document.getElementById('admin-serie').value;
+
+    try {
+        // Exemplo de como você faria o upload da imagem e pegaria o URL
+        // (Você precisa adaptar este trecho com o seu código de upload)
+        const storageRef = ref(storage, `videos/thumbnails/${imageFile.name}`);
+        await uploadBytes(storageRef, imageFile);
+        const thumbnailUrl = await getDownloadURL(storageRef);
+
+        // Cria um ID único para o vídeo
+        const docId = doc(collection(db, `artifacts/${appId}/public/data/videos`)).id;
+
+        // Cria o objeto 'videoData' com todas as informações, incluindo a 'serie'
+        const videoData = {
+            videoUrl: videoUrl,
+            title: 'Título do Vídeo', // Você precisa adicionar um campo de título no HTML
+            description: description,
+            serie: serie,
+            thumbnailUrl: thumbnailUrl,
+            createdAt: serverTimestamp()
+        };
+        
+        // Salva o objeto 'videoData' no Firebase
+        const docRef = doc(db, `artifacts/${appId}/public/data/videos`, docId);
+        await setDoc(docRef, videoData);
+
+        // Mensagem de sucesso
+        adminMessage.textContent = 'Aula adicionada com sucesso!';
+        adminMessage.style.color = '#a7f3d0';
+
+    } catch (error) {
+        console.error("Erro ao adicionar aula:", error);
+        adminMessage.textContent = 'Erro ao adicionar a aula. Tente novamente.';
+        adminMessage.style.color = '#fca5a5';
+    } finally {
+        loadingMessage.style.display = 'none';
+    }
+});
 
                     const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
                     const storageRef = ref(storage, `artifacts/${appId}/public/images/${imageFile.name}`);
@@ -1241,7 +1313,7 @@
                     });
                     
                     // Listener para Eventos
-                    const eventsQuery = query(collection(db, `artifacts/${appId}/public/data/events`), orderBy("date", "asc"), orderBy("time", "asc"));
+                    const eventsQuery = query(collection(db, `artifacts/${appId}/public/data/eventos`), orderBy("date", "asc"), orderBy("time", "asc"));
                     onSnapshot(eventsQuery, (snapshot) => {
                         eventsGrid.innerHTML = '';
                         if (snapshot.empty) {
@@ -1278,6 +1350,11 @@
 
                     // Listener para Pedidos de Oração (usando coleção centralizada)
                     const prayerRequestsQuery = query(
+                        collection(db, `artifacts/${appId}/public/data/allPrayerRequests`),
+                        orderBy("createdAt", "desc")
+                    );
+
+                    const usersProfileList = query(
                         collection(db, `artifacts/${appId}/public/data/allPrayerRequests`),
                         orderBy("createdAt", "desc")
                     );
