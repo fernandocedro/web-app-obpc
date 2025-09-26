@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
         <meta name="color-scheme" content="light dark">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-        <title>Obpc School - Ofertas</title>
+        <title>Obpc School - Departamentos</title>
         <style>
             /* Estilos de fonte do Google Fonts */
             @import url('https://fonts.googleapis.com/css2?family=Anton&family=Boldonse&family=Funnel+Sans:ital,wght@0,300..800;1,300..800&family=Manrope:wght@200..800;1,200..800&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Unbounded:wght@200..900&display=swap');
@@ -53,16 +53,7 @@
                 width: 100%;
                 padding: 10px;
             }
-            .header-top h1 {
-                font-family: 'Anton', sans-serif;
-                font-size: 1.5rem;
-                letter-spacing: 2px;
-                color: #E25402;
-                margin: 0;
-            }
-            .header-top h1 span {
-                color: white;
-            }
+            
             .header-top-line {
                 width: 150px;
                 height: 2px;
@@ -70,52 +61,65 @@
                 margin: 5px auto;
             }
 
-            /* Estilos para a seção "Ofertas" */
-            .oferta-screen-container {
+            /* Estilos para a seção "Departamentos" */
+            .departments-container {
                 padding: 20px;
             }
-            .oferta-screen-container h2 {
+            .departments-container h2 {
                 color: #E25402;
                 text-align: left;
                 margin-bottom: 15px;
             }
-            .oferta-card {
+            .department-card {
                 background-color: #06224A;
                 border-radius: 15px;
                 box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
                 padding: 20px;
                 margin-bottom: 20px;
             }
-            .oferta-card img {
+            .department-card img {
                 width: 100%;
                 height: auto;
                 border-radius: 10px;
                 margin-bottom: 15px;
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
             }
-            .oferta-card h3 {
+            .department-card h3 {
                 color: #E25402;
                 font-size: 1.5rem;
                 margin-bottom: 10px;
             }
-            .oferta-card p {
+            .department-card p {
                 font-size: 1rem;
                 color: #ccc;
                 line-height: 1.4;
+                margin-bottom: 20px;
             }
-            .loading-message, .error-message {
-                text-align: center;
-                padding: 20px;
-                color: #E25402;
+            .subscribe-button {
+                width: 100%;
+                padding: 12px;
+                border-radius: 8px;
+                background-color: #E25402;
+                color: white;
+                font-weight: bold;
+                border: none;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
             }
-            .no-classes-message {
+            .subscribe-button:hover:not(:disabled) {
+                background-color: #d14a02;
+            }
+            .subscribe-button:disabled {
+                background-color: #555;
+                cursor: not-allowed;
+            }
+            .loading-message, .error-message, .no-content-message {
                 text-align: center;
                 padding: 20px;
                 color: #ccc;
             }
             
             /* Estilos do Rodapé e Menu Lateral */
-           /* Estilos do rodapé */
             .container-menun-inferior {
                 position: fixed;
                 bottom: 0;
@@ -135,7 +139,7 @@
                 padding: 10px 0;
                 position: fixed;
                 border-radius: 15px;
-                bottom: 52px;
+                bottom: 20px;
                 width: 85%;
                 z-index: 10;
                 box-shadow:  rgba(226, 84, 2, 0.3) 0px 4px 15px;
@@ -148,9 +152,6 @@
             .container-footer i {
                 color: #E25402;
                 font-size: 1.5rem;
-            }
-            .container-footer i {
-                color: #E25402; font-size: 1.5rem;
             }
             
             .menu-oculto {
@@ -219,64 +220,22 @@
                 margin-right: 10px;
                 object-fit: cover;
             }
-            
-            @media (min-width: 768px) {
-                body {
-                    flex-direction: row;
-                    justify-content: center;
-                    align-items: flex-start;
-                }
-                #app-container {
-                    flex-direction: row;
-                    width: 100%;
-                    max-width: 1200px;
-                    height: 100%;
-                }
-                .container-header {
-                    display: none;
-                }
-                .container-footer {
-                    display: none;
-                }
-                .main-content {
-                    width: calc(100% - 250px);
-                    padding-bottom: 20px;
-                }
-                .menu-oculto {
-                    position: static;
-                    right: auto;
-                    width: 250px;
-                    height: 100%;
-                    background-color: #06224A;
-                    transition: none;
-                    display: flex;
-                }
-                .btn-fecharOculto {
-                    display: none;
-                }
-                .menu-opcoes-barra {
-                    padding: 20px;
-                }
-                .menu-footer {
-                    padding: 20px;
-                }
-            }
         </style>
     </head>
     <body>
         <div id="app-container">
             <header class="container-header">
                 <div class="header-top">
-                    <img src="./img/logo-obpc.png" alt="">
+                    <img src="./img/logo-obpc.png" alt="Logo OBPC">
                 </div>
                 <div class="header-top-line"></div>
             </header>
             
             <div class="main-content">
-                <section class="oferta-screen-container" id="ofertas-screen">
-                    <h2>Ofertas</h2>
-                    <div id="ofertas-container">
-                        <div class="loading-message">Carregando ofertas...</div>
+                <section class="departments-container">
+                    <h2>Nossos Departamentos</h2>
+                    <div id="department-list-container">
+                        <div class="loading-message">Carregando departamentos...</div>
                     </div>
                 </section>
             </div>
@@ -297,13 +256,11 @@
                     </div>
                 </footer>
             </div>
-  </div>
+        </div>
 
         <div class="menu-oculto" id="menu-oculto">
             <div>
-                <div class="btn-fecharOculto" id="btn-fechar-menu">
-                    x
-                </div>
+                <div class="btn-fecharOculto" id="btn-fechar-menu">x</div>
                <div class="menu-opcoes">
                     <div class="menu-opcoes-barra"><a href="biblia.html"><i class="fa-solid fa-book-bible"></i> Bíblia </a></div>
                     <div class="menu-opcoes-barra"><a href="notes.html"><i class="fa-solid fa-note-sticky"></i> Anotações</a></div>
@@ -318,7 +275,6 @@
                     <img id="menu-profile-img" src="https://placehold.co/50x50/E25402/FFFFFF" alt="Perfil">
                     <div class="user-names">
                         <span id="menu-user-name">Carregando...</span>
-                        <span id="menu-user-surname"></span>
                     </div>
                 </div>
                 <div class="menu-opcoes-barra" id="logout-button"><i class="fa-solid fa-right-from-bracket"></i> Sair</div>
@@ -328,15 +284,11 @@
         <script type="module">
             import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
             import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-            import { getFirestore, collection, onSnapshot, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+            import { getFirestore, collection, onSnapshot, query, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-            let db;
-            let auth;
-            let appId;
-            let isFirebaseInitialized = false;
-
-            // Elementos do DOM
-            const ofertasContainer = document.getElementById('ofertas-container');
+            let db, auth, appId, userId, currentUserProfile;
+            
+            const departmentListContainer = document.getElementById('department-list-container');
             const menuOculto = document.getElementById('menu-oculto');
             const btnAbrirMenu = document.getElementById('btn-abrir-menu');
             const btnFecharMenu = document.getElementById('btn-fechar-menu');
@@ -344,99 +296,115 @@
             const menuUserName = document.getElementById('menu-user-name');
             const menuProfileImg = document.getElementById('menu-profile-img');
 
-            // Funções de navegação
-            const showLoginScreen = () => {
-                // Redireciona para a página de login principal
-                window.location.href = "index.html";
-            }
-            
-            // Listeners para navegação e menu lateral
-            btnAbrirMenu.addEventListener('click', () => {
-                menuOculto.classList.add('active');
-            });
-            btnFecharMenu.addEventListener('click', () => {
-                menuOculto.classList.remove('active');
-            });
-            logoutButton.addEventListener('click', () => {
-                signOut(auth).then(() => {
-                    window.location.href = "index.html"; // Redireciona para a página de login
-                }).catch((error) => {
-                    console.error("Erro ao fazer logout:", error);
-                });
-            });
+            btnAbrirMenu.addEventListener('click', () => menuOculto.classList.add('active'));
+            btnFecharMenu.addEventListener('click', () => menuOculto.classList.remove('active'));
+            logoutButton.addEventListener('click', () => signOut(auth).catch(error => console.error("Logout error:", error)));
 
-            // Função para buscar e/ou criar o documento de perfil do usuário no Firestore
-            const fetchOrCreateUserProfile = async (user, appId) => {
-                try {
-                    // O caminho do documento agora corresponde à sua estrutura
-                    const userRef = doc(db, `/artifacts/${appId}/users/${user.uid}/profile/profile_data`);
-                    const docSnap = await getDoc(userRef);
-
+            const fetchUserProfile = async (user) => {
+                if (!db || !user) return;
+                const userProfileRef = doc(db, `artifacts/${appId}/users/${user.uid}/profile/profile_data`);
+                
+                onSnapshot(userProfileRef, (docSnap) => {
                     if (docSnap.exists()) {
-                        const profileData = docSnap.data();
-                        // Combina o nome e o sobrenome para o nome do usuário
-                        const fullName = `${profileData.firstName || ''} ${profileData.lastName || ''}`.trim();
+                        currentUserProfile = docSnap.data();
+                        const fullName = `${currentUserProfile.firstName || ''} ${currentUserProfile.lastName || ''}`.trim();
                         menuUserName.textContent = fullName || 'Usuário';
-                        menuProfileImg.src = profileData.profileImageUrl || 'https://placehold.co/50x50/E25402/FFFFFF';
+                        menuProfileImg.src = currentUserProfile.profileImageUrl || 'https://placehold.co/50x50/E25402/FFFFFF';
                     } else {
-                        console.log("Nenhum documento de perfil encontrado para o usuário. Criando um novo...");
-                        
-                        // Cria um novo documento de perfil com dados padrão
-                        const defaultProfile = {
-                            firstName: 'Usuário',
-                            lastName: '',
-                            profileImageUrl: user.photoURL || 'https://placehold.co/50x50/E25402/FFFFFF'
-                        };
-
-                        await setDoc(userRef, defaultProfile);
-                        
-                        // Atualiza a UI com os dados padrão
-                        menuUserName.textContent = defaultProfile.firstName;
-                        menuProfileImg.src = defaultProfile.profileImageUrl;
+                        currentUserProfile = null;
+                        menuUserName.textContent = 'Usuário';
+                        menuProfileImg.src = 'https://placehold.co/50x50/E25402/FFFFFF';
                     }
-                } catch (error) {
-                    console.error("Erro ao buscar ou criar dados do perfil:", error);
-                    menuUserName.textContent = 'Usuário';
-                    menuProfileImg.src = 'https://placehold.co/50x50/E25402/FFFFFF';
-                }
-            };
-
-
-            // Função para buscar e renderizar ofertas
-            const fetchAndRenderOfertas = (appId) => {
-                const ofertasRef = collection(db, `/artifacts/${appId}/public/data/ofertas`);
-                onSnapshot(ofertasRef, (snapshot) => {
-                    ofertasContainer.innerHTML = '';
-                    if (snapshot.empty) {
-                        ofertasContainer.innerHTML = '<div class="no-classes-message">Nenhuma oferta cadastrada.</div>';
-                        return;
-                    }
-                    snapshot.forEach((doc) => {
-                        const oferta = doc.data();
-                        const ofertaCard = document.createElement('div');
-                        ofertaCard.classList.add('oferta-card');
-                        ofertaCard.innerHTML = `
-                            <h3>${oferta.title}</h3>
-                            <img src="${oferta.imageUrl}" alt="${oferta.title}">
-                            <p>${oferta.text}</p>
-                        `;
-                        ofertasContainer.appendChild(ofertaCard);
-                    });
-                }, (error) => {
-                    console.error("Erro ao carregar ofertas do Firestore:", error);
-                    ofertasContainer.innerHTML = '<div class="error-message">Erro ao carregar ofertas.</div>';
+                    fetchAndRenderDepartments();
                 });
             };
 
-            // Inicializa o Firebase e ouve a autenticação
-            const setupFirebase = async () => {
+            const renderDepartments = (departments) => {
+                departmentListContainer.innerHTML = '';
+                if (!departments || departments.length === 0) {
+                    departmentListContainer.innerHTML = '<div class="no-content-message">Nenhum departamento encontrado.</div>';
+                    return;
+                }
+
+                departments.forEach(dept => {
+                    const card = document.createElement('div');
+                    card.className = 'department-card';
+                    
+                    let buttonHtml = '<button class="subscribe-button" disabled>Carregando...</button>';
+                    
+                    if (userId && currentUserProfile) {
+                        const userRequests = currentUserProfile.departmentRequests || [];
+                        const existingRequest = userRequests.find(req => req.departmentId === dept.id);
+
+                        if (existingRequest) {
+                            if (existingRequest.status === 'approved') {
+                                buttonHtml = '<button class="subscribe-button" disabled>Inscrito</button>';
+                            } else if (existingRequest.status === 'pending') {
+                                buttonHtml = '<button class="subscribe-button" disabled>Pendente</button>';
+                            } else {
+                                buttonHtml = `<button class="subscribe-button" data-id="${dept.id}">Inscrever-se</button>`;
+                            }
+                        } else {
+                            buttonHtml = `<button class="subscribe-button" data-id="${dept.id}">Inscrever-se</button>`;
+                        }
+                    } else if (!userId) {
+                         buttonHtml = '<button class="subscribe-button" disabled>Faça login para se inscrever</button>';
+                    }
+
+                    card.innerHTML = `
+                        <img src="${dept.imageUrl || 'https://placehold.co/400x200/06224A/E25402?text=Departamento'}" alt="${dept.name}">
+                        <h3>${dept.name}</h3>
+                        <p>${dept.description}</p>
+                        ${buttonHtml}
+                    `;
+                    departmentListContainer.appendChild(card);
+                });
+
+                document.querySelectorAll('.subscribe-button[data-id]').forEach(button => {
+                    button.addEventListener('click', async (e) => {
+                        const deptId = e.target.dataset.id;
+                        if(!userId || !currentUserProfile) return;
+
+                        const userProfileRef = doc(db, `artifacts/${appId}/users/${userId}/profile/profile_data`);
+                        try {
+                            const currentRequests = currentUserProfile.departmentRequests || [];
+                            if (currentRequests.some(req => req.departmentId === deptId)) {
+                                alert('Você já tem uma solicitação para este departamento.');
+                                return;
+                            }
+                            const newRequest = { departmentId: deptId, status: 'pending' };
+                            const updatedRequests = [...currentRequests, newRequest];
+                            
+                            await updateDoc(userProfileRef, {
+                                departmentRequests: updatedRequests
+                            });
+                        } catch (error) {
+                            console.error("Erro ao solicitar inscrição:", error);
+                            alert('Não foi possível processar sua solicitação. Tente novamente.');
+                        }
+                    });
+                });
+            };
+
+            const fetchAndRenderDepartments = () => {
+                if (!db) return;
+                const departmentsRef = collection(db, `artifacts/${appId}/public/data/departments`);
+                onSnapshot(departmentsRef, (snapshot) => {
+                    const departmentsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    renderDepartments(departmentsData);
+                }, (error) => {
+                    console.error("Erro ao carregar departamentos:", error);
+                    departmentListContainer.innerHTML = '<div class="error-message">Erro ao carregar departamentos.</div>';
+                });
+            };
+
+            const setupFirebase = () => {
                 try {
                     let firebaseConfig;
-                    if (typeof __firebase_config !== 'undefined') {
+                    if (typeof __firebase_config !== 'undefined' && typeof __app_id !== 'undefined') {
                         firebaseConfig = JSON.parse(__firebase_config);
-                        appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                        appId = __app_id;
                     } else {
-                        // Fallback para ambiente de desenvolvimento local
                         firebaseConfig = {
                             apiKey: "AIzaSyArteycUkaN5-dClQ28oHSl-NoiL-s4NaY",
                             authDomain: "app-obpc-49823.firebaseapp.com",
@@ -452,33 +420,26 @@
                     const app = initializeApp(firebaseConfig);
                     auth = getAuth(app);
                     db = getFirestore(app);
-                    isFirebaseInitialized = true;
 
-                    // Na página de ofertas, não há autenticação obrigatória para carregar o conteúdo principal
-                    fetchAndRenderOfertas(appId);
-
-                    // A função onAuthStateChanged já "puxa" o usuário logado
-                    // e executa a lógica apropriada.
                     onAuthStateChanged(auth, async (user) => {
                         if (user) {
-                            // Se o usuário existir, os dados dele serão puxados aqui.
-                            await fetchOrCreateUserProfile(user, appId);
+                            userId = user.uid;
+                            await fetchUserProfile(user);
                         } else {
-                            // Define valores padrão se não houver usuário logado
+                            userId = null;
+                            currentUserProfile = null;
                             menuUserName.textContent = 'Usuário';
                             menuProfileImg.src = 'https://placehold.co/50x50/E25402/FFFFFF';
+                            fetchAndRenderDepartments();
                         }
                     });
-
                 } catch (e) {
-                    console.error("Falha ao inicializar o Firebase. Verifique sua configuração.", e);
-                    ofertasContainer.innerHTML = '<div class="error-message">Falha ao conectar ao banco de dados. Verifique a configuração do Firebase.</div>';
+                    console.error("Falha ao inicializar o Firebase:", e);
+                    departmentListContainer.innerHTML = '<div class="error-message">Falha ao conectar ao banco de dados.</div>';
                 }
             };
             
-            document.addEventListener('DOMContentLoaded', async () => {
-                setupFirebase();
-            });
+            document.addEventListener('DOMContentLoaded', setupFirebase);
         </script>
     </body>
 </html>
