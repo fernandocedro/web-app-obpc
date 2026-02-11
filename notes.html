@@ -22,7 +22,7 @@
   }
 
   body {
-    background: #000;
+    background: #1F1C1C;
     color: #fff;
     font-family: "Funnel Sans", sans-serif;
     display: flex;
@@ -34,7 +34,7 @@
   /* cabeçalho */
   .container-header { 
     display: flex; flex-direction: column; align-items: center; 
-    background: #000; padding: 15px 0; 
+    background: #1F1C1C; padding: 15px 0; 
    }
 
             .header-top {
@@ -60,7 +60,7 @@
             .header-top-line {
                 width: 150px;
                 height: 2px;
-                background-color: #E25402;
+                background-color: #FBBDA1;
                 margin: 5px auto;
             }
 
@@ -77,7 +77,7 @@
     display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(150px,1fr));
   }
   .note-card {
-    background: #1e1e1e; border-radius: 12px; padding: 1rem;
+    background: #000000; border-radius: 12px; padding: 1rem;
     box-shadow: 0 4px 6px rgba(0,0,0,0.3);
     position: relative; 
     cursor: pointer;
@@ -88,7 +88,7 @@
   }
   .note-title { 
     font-weight: bold; 
-    color: #f4802c; 
+    color: #FBBDA1; 
     margin-bottom: 0.5rem; 
     white-space: nowrap;
     overflow: hidden;
@@ -114,7 +114,7 @@
   .note-actions .edit-note, .note-actions .delete-note {
     background: none;
     border: none;
-    color: #f4802c; 
+    color: #ff9d57; 
     font-size: 1rem;
     cursor: pointer;
     padding: 5px;
@@ -140,14 +140,14 @@
             .container-footer {
                 display: flex;
                 justify-content: space-around;
-                background-color: rgba(6, 34, 74, 0.9);
+                background-color: rgba(0, 0, 0, 0.9);
                 padding: 10px 0;
                 position: fixed;
-                border-radius: 15px;
+                border-radius: 50px;
                 bottom: 52px;
                 width: 85%;
                 z-index: 10;
-                box-shadow:  rgba(226, 84, 2, 0.3) 0px 4px 15px;
+                box-shadow:  rgba(255, 255, 255, 0.3) 0px 4px 15px;
             }
             .container-footer a {
                 color: white;
@@ -158,12 +158,15 @@
                 color: #E25402;
                 font-size: 1.5rem;
             }
-  .container-footer i { color: #E25402; font-size: 1.5rem; }
+  .container-footer i { color: #FBBDA1; font-size: 1.5rem; }
   
   /* menu lateral */
   .menu-oculto { 
-    position: fixed; top: 0; right: -100%; width: 250px; height: 100%; 
-    background: #06224A; transition: right .5s ease-in-out; z-index: 999; 
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 250px; height: 100%; 
+    background: #000000; transition: right .5s ease-in-out; z-index: 999; 
     display: flex; flex-direction: column; justify-content: space-between;
     padding-bottom: 20px;
   }
@@ -185,7 +188,7 @@
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
   .menu-opcoes-barra:hover { background-color: rgba(255, 255, 255, 0.1); }
-  .menu-opcoes-barra i { color: #E25402; }
+  .menu-opcoes-barra i { color: #FBBDA1; }
   
   .menu-footer {
     display: flex; flex-direction: column; gap: 15px; padding: 10px 20px;
@@ -237,7 +240,7 @@
   #view-modal .note-full-title {
       font-size: 1.5rem;
       font-weight: bold;
-      color: #E25402;
+      color: #b6b6b6;
       margin-bottom: 1rem;
   }
   #view-modal .note-full-content {
@@ -271,8 +274,8 @@
     position: fixed;
     bottom: 100px;
     left: 20px;
-    background-color: #E25402; 
-    color: #fff;
+    background-color: #FBBDA1; 
+    color: #000000;
     width: 56px;
     height: 56px;
     border-radius: 50%; 
@@ -294,7 +297,7 @@
   <div id="app-container">
     <header class="container-header">
       <div class="header-top">
-        <img src="./img/logo-obpc.png" alt="">
+        <img src="./img/logo.png" alt="">
       </div>
       <div class="header-top-line"></div>
     </header>
