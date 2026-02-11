@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="msapplication-tap-highlight" content="no">
-        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
         <meta name="color-scheme" content="light dark">
         <title>Igreja OBPC</title>
         <script src="cordova.js"></script>
@@ -21,13 +21,6 @@
                 padding: 0;
             }
 
-            input[type="email"], 
-            input[type="password"], 
-            input[type="text"] {
-                -webkit-user-select: text !important;
-                user-select: text !important;
-                touch-action: manipulation;
-            }
 
             html, body {
                 height: 100%;
@@ -59,6 +52,14 @@
                 font-family: 'Anton', sans-serif;
                 text-align: center;
                 pointer-events: none;
+            }
+
+            input[type="email"], 
+            input[type="password"], 
+            input[type="text"] {
+                -webkit-user-select: text !important;
+                user-select: text !important;
+                touch-action: manipulation;
             }
 
             .spinner {
@@ -1576,6 +1577,7 @@ const setupPushNotifications = async (user) => {
                 }
 
                 if (initialLoadingSplash) {
+                initialLoadingSplash.style.display = 'none';
                 initialLoadingSplash.remove(); // Remove o elemento do HTML completamente
             }
             });
