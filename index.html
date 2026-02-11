@@ -21,6 +21,14 @@
                 padding: 0;
             }
 
+            input[type="email"], 
+            input[type="password"], 
+            input[type="text"] {
+                -webkit-user-select: text !important;
+                user-select: text !important;
+                touch-action: manipulation;
+            }
+
             html, body {
                 height: 100%;
             }
@@ -50,6 +58,7 @@
                 font-size: 1.5rem;
                 font-family: 'Anton', sans-serif;
                 text-align: center;
+                pointer-events: none;
             }
 
             .spinner {
@@ -1567,8 +1576,8 @@ const setupPushNotifications = async (user) => {
                 }
 
                 if (initialLoadingSplash) {
-                    initialLoadingSplash.style.display = 'none';
-                }
+                initialLoadingSplash.remove(); // Remove o elemento do HTML completamente
+            }
             });
 
         } catch (e) {
