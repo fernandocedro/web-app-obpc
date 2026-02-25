@@ -339,7 +339,8 @@
             }
 
             const readingPlansRef = collection(db, `artifacts/${appId}/public/data/readingPlans`);
-            const q = query(readingPlansRef, orderBy("date", "desc"));
+            // MUDANÇA 1: Aqui trocamos de 'desc' para 'asc' para listar do menor para o maior
+            const q = query(readingPlansRef, orderBy("date", "asc"));
             
             onSnapshot(q, async (snapshot) => {
                 readingPlanList.innerHTML = '';
@@ -355,9 +356,18 @@
                         const isRead = userReadings[docSnap.id] === true;
                         const buttonText = isRead ? 'Lido ✅' : 'Marcar como Lido';
 
+                        // MUDANÇA 2: Tratamento para formatar a data
+                        let dataFormatada = plan.date;
+                        if (plan.date) {
+                            const [ano, mes, dia] = plan.date.split('-');
+                            const dataObj = new Date(ano, mes - 1, dia);
+                            dataFormatada = dataObj.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long' });
+                        }
+
+                        // MUDANÇA 3: Substituição do ${plan.date} pelo ${dataFormatada}
                         const planHtml = `
                             <div class="reading-plan-card" data-doc-id="${docSnap.id}">
-                                <p class="date">${plan.date}</p>
+                                <p class="date">${dataFormatada}</p>
                                 <p class="title">${plan.title}</p>
                                 <p class="verse">${plan.verse}</p>
                                 <p class="text">${plan.text}</p>
