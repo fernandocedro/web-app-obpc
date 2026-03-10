@@ -165,8 +165,9 @@
                 width: 100%;
                 max-width: 800px;
                 display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-                gap: 10px;
+                /* Colunas menores para ficar parecido com a imagem de referência */
+                grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+                gap: 5px; /* Espaço menor entre as células */
                 overflow-y: auto;
                 max-height: 90vh;
                 padding: 15px;
@@ -186,22 +187,25 @@
             .grid-button {
                 background-color: #1F1C1C;
                 color: #fff;
-                border: 1px solid #ffffff;
-                border-radius: 10px;
-                padding: 12px;
+                border: 1px solid #333; /* Borda mais sutil como no exemplo */
+                border-radius: 5px; /* Bordas menos arredondadas */
+                padding: 15px 0; /* Ajuste para centralizar o texto num quadrado */
                 text-align: center;
                 font-family: "Funnel Sans", sans-serif;
-                font-size: 1rem;
+                font-size: 1.1rem; /* Fonte um pouco maior para a sigla */
+                font-weight: bold;
                 cursor: pointer;
                 transition: all 0.3s ease;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+                aspect-ratio: 1 / 1; /* Força os botões a serem quadrados */
+                display: flex;
+                justify-content: center;
+                align-items: center;
             }
 
             .grid-button:hover, .grid-button.active {
-                background-color: #636363;
+                background-color: #fff;
                 color: #000;
                 border-color: #fff;
-                box-shadow: 0 6px 8px rgba(0, 0, 0, 0.5);
             }
 
             /* Estilo para o botão de fechar */
@@ -300,6 +304,7 @@
                 flex-grow: 1; /* Permite que o conteúdo principal cresça para ocupar o espaço disponível */
                 overflow-y: auto; /* A chave! Cria uma barra de rolagem apenas para esta seção */
                 padding: 20px;
+                padding-bottom: 130px; /* <--- ESPAÇO ADICIONADO AQUI PARA NÃO FICAR ATRÁS DO MENU */
             }
 
             #bible-content {
@@ -367,12 +372,6 @@
                 color: #FBBDA1;
                 font-size: 1.5rem;
             }
-            .container-footer i { 
-                color: #FBBDA1; 
-                font-size: 1.5rem; 
-            }
-            
-            
             
             /* --- INÍCIO: ESTILOS DO MENU LATERAL --- */
             .menu-oculto {
@@ -442,6 +441,7 @@
                 border-radius: 50%;
                 border: 2px solid white;
                 margin-right: 10px;
+                object-fit: cover;
             }
             
             .user-names {
@@ -460,7 +460,7 @@
             <header class="container-header">
                 <div class="header-top" id="header-logo-section">
                     <img src="./img/logo.png" alt="">
-                </div>          
+                </div>          
             </header>
 
             <main class="main-content">
@@ -527,6 +527,7 @@
                 </div>
                 <div class="menu-opcoes">
                     <div class="menu-opcoes-barra"><a href="biblia.html"><i class="fa-solid fa-book-bible"></i> Bíblia </a></div>
+                    <div class="menu-opcoes-barra"><a href="index.html"><i class="fa-solid fa-bell"></i> Notificações</a></div>
                     <div class="menu-opcoes-barra"><a href="notes.html"><i class="fa-solid fa-note-sticky"></i> Anotações</a></div>
                     <div class="menu-opcoes-barra"><a href="leitura-diaria.html"><i class="fa-regular fa-calendar-check"></i> Leitura Diaria</a></div>
                     <div class="menu-opcoes-barra"><a href="oracao.html"><i class="fa-solid fa-hands-praying"></i> Oração</a></div>
@@ -568,9 +569,8 @@
             const auth = getAuth(app);
             const db = getFirestore(app);
 
-            // --- Código JavaScript da Bíblia (original) ---
+            // --- Código JavaScript da Bíblia (atualizado com cache offline) ---
             
-            // Referências aos elementos do DOM
             const bibleContent = document.getElementById('bible-content');
             const prevChapterBtn = document.getElementById('prev-chapter');
             const nextChapterBtn = document.getElementById('next-chapter');
@@ -586,57 +586,78 @@
             const chapterGrid = document.getElementById('chapter-grid');
             const currentBookDisplay = document.getElementById('current-book-display');
             const currentChapterDisplay = document.getElementById('current-chapter-display');
-            // Novos botões de fechar
             const closeBookBtn = document.getElementById('close-book-btn');
             const closeChapterBtn = document.getElementById('close-chapter-btn');
             
-            // Variáveis de estado
             let allBibleData = null; 
             let currentBookIndex = 0;
             let currentChapterNumber = 1;
 
-            // URL para o arquivo JSON completo da Bíblia (fonte atualizada e estável)
             const BIBLE_JSON_URL = 'https://raw.githubusercontent.com/thiagobodruk/bible/master/json/pt_acf.json';
+            const CACHE_NAME = 'obpc-bible-cache-v1'; // Nome do nosso "cofre" de dados
 
-            // --- Funções principais do aplicativo ---
-
-            // Inicializa a aplicação, carregando o JSON e populando os grids
+            // Inicializa a aplicação, carregando o JSON com suporte offline
             async function initApp() {
                 bibleContent.innerHTML = '<div class="loading-message">Carregando dados da Bíblia...</div>';
                 try {
-                    const response = await fetch(BIBLE_JSON_URL);
-                    if (!response.ok) {
-                        throw new Error('Não foi possível carregar o arquivo JSON da Bíblia.');
+                    // Abre o "cofre" de cache do navegador/app
+                    const cache = await caches.open(CACHE_NAME);
+                    
+                    // Verifica se a Bíblia já está salva lá dentro
+                    let response = await cache.match(BIBLE_JSON_URL);
+
+                    if (response) {
+                        console.log("Bíblia carregada do cache local (Offline)!");
+                    } else {
+                        console.log("Baixando Bíblia da internet pela primeira vez...");
+                        response = await fetch(BIBLE_JSON_URL);
+                        
+                        if (!response.ok) {
+                            throw new Error('Não foi possível baixar o arquivo JSON da Bíblia.');
+                        }
+                        
+                        // Guarda uma cópia no cache para as próximas vezes
+                        cache.put(BIBLE_JSON_URL, response.clone());
                     }
+
                     allBibleData = await response.json();
                     
-                    // Popula o grid de livros ao iniciar
                     populateBooksGrid();
 
-                    // Carrega o primeiro livro (Gênesis) por padrão
                     if (allBibleData && allBibleData.length > 0) {
                         const initialBookAbbrev = allBibleData[currentBookIndex].abbrev;
                         displayChapter(initialBookAbbrev, currentChapterNumber);
                     }
                 } catch (error) {
-                    bibleContent.innerHTML = `<div class="error-message">Erro ao carregar a Bíblia: ${error.message}</div>`;
+                    bibleContent.innerHTML = `<div class="error-message">Erro ao carregar a Bíblia. Você precisa de internet apenas na primeira vez que abrir o app.</div>`;
                     console.error("Erro ao carregar a Bíblia:", error);
                 }
             }
 
-            /**
-             * Popula o grid de livros e adiciona listeners de clique.
-             */
+            // Função auxiliar para capitalizar a primeira letra
+            function capitalizeFirstLetter(string) {
+                return string.charAt(0).toUpperCase() + string.slice(1);
+            }
+
             function populateBooksGrid() {
                 bookGrid.innerHTML = '<h3>Escolha o Livro</h3>'; // Limpa o grid e adiciona o título
                 if (allBibleData) {
                     allBibleData.forEach((book, index) => {
                         const button = document.createElement('div');
                         button.className = 'grid-button';
-                        button.textContent = book.name;
+                        
+                        // ALTERADO: Usa a abreviação (ex: 'gn') em vez do nome ('Gênesis')
+                        // e capitaliza para ficar 'Gn'
+                        let abbrevText = book.abbrev;
+                        if(abbrevText) {
+                            button.textContent = capitalizeFirstLetter(abbrevText);
+                        } else {
+                            // Fallback caso não tenha abbrev (pega as 2 primeiras letras do nome)
+                            button.textContent = capitalizeFirstLetter(book.name.substring(0, 2));
+                        }
+
                         button.dataset.index = index;
                         
-                        // Adiciona o evento de clique para abrir o grid de capítulos
                         button.addEventListener('click', () => {
                             currentBookIndex = index;
                             populateChaptersGrid(book);
@@ -648,10 +669,6 @@
                 }
             }
 
-            /**
-             * Popula o grid de capítulos com base no livro selecionado.
-             * @param {object} book - O objeto do livro.
-             */
             function populateChaptersGrid(book) {
                 chapterGrid.innerHTML = '<h3>Escolha o Capítulo</h3>'; // Limpa o grid e adiciona o título
                 if (book && book.chapters && Array.isArray(book.chapters)) {
@@ -661,7 +678,6 @@
                         button.textContent = i;
                         button.dataset.chapter = i;
 
-                        // Adiciona o evento de clique para exibir o capítulo
                         button.addEventListener('click', () => {
                             currentChapterNumber = i;
                             const selectedBookAbbrev = allBibleData[currentBookIndex].abbrev;
@@ -673,11 +689,6 @@
                 }
             }
 
-            /**
-             * Exibe os versículos de um capítulo a partir dos dados locais.
-             * @param {string} bookAbbrev - A abreviação do livro.
-             * @param {number} chapterNumber - O número do capítulo.
-             */
             function displayChapter(bookAbbrev, chapterNumber) {
                 if (!allBibleData) {
                     bibleContent.innerHTML = '<div class="error-message">Dados da Bíblia não carregados. Por favor, recarregue a página.</div>';
@@ -693,7 +704,6 @@
                     const chapter = book.chapters[chapterIndex];
                     bibleContent.innerHTML = `<h3>${book.name} - Capítulo ${chapterNumber}</h3>`;
                     
-                    // Atualiza a exibição da seleção atual
                     currentBookDisplay.textContent = book.name;
                     currentChapterDisplay.textContent = `Capítulo ${chapterNumber}`;
 
@@ -707,10 +717,6 @@
                 }
             }
 
-            /**
-             * Busca versículos que contenham o texto de busca.
-             * @param {string} query - O texto a ser buscado.
-             */
             function searchBible(query) {
                 if (!allBibleData) {
                         bibleContent.innerHTML = '<div class="error-message">Dados da Bíblia não carregados. A busca não pode ser realizada.</div>';
@@ -757,17 +763,15 @@
                     } else {
                         bibleContent.innerHTML = '<div class="error-message">Nenhum versículo encontrado.</div>';
                     }
-                }, 500); // 500ms de delay para simular a busca
+                }, 500);
             }
 
             // --- Eventos de mudança e clique ---
 
-            // Evento para abrir o overlay de livros
             selectionDisplay.addEventListener('click', () => {
                 bookOverlay.classList.add('active');
             });
 
-            // Eventos para navegação de capítulo
             prevChapterBtn.addEventListener('click', () => {
                 if (!allBibleData) return;
                 
@@ -778,7 +782,6 @@
                     const prevBook = allBibleData[currentBookIndex];
                     currentChapterNumber = prevBook.chapters.length;
                 } else {
-                    // Se estiver em Gênesis 1, não faz nada
                     return;
                 }
 
@@ -796,7 +799,6 @@
                     currentBookIndex++;
                     currentChapterNumber = 1;
                 } else {
-                    // Se estiver no último capítulo do último livro, não faz nada
                     return;
                 }
                 
@@ -804,7 +806,6 @@
                 displayChapter(selectedBookAbbrev, currentChapterNumber);
             });
             
-            // Eventos do overlay de busca
             searchToggleBtn.addEventListener('click', () => {
                 searchOverlay.classList.add('active');
                 searchInputOverlay.focus();
@@ -827,7 +828,6 @@
                 }
             });
 
-            // Eventos para fechar os overlays de livro e capítulo
             closeBookBtn.addEventListener('click', () => {
                 bookOverlay.classList.remove('active');
             });
@@ -835,8 +835,6 @@
             closeChapterBtn.addEventListener('click', () => {
                 chapterOverlay.classList.remove('active');
             });
-
-            // --- FIM: Código JavaScript da Bíblia ---
 
             // --- INÍCIO: LÓGICA DO MENU LATERAL E FIREBASE ---
             const menuOculto = document.getElementById('menu-oculto');

@@ -35,8 +35,12 @@
         .container-header { 
             display: flex; flex-direction: column; align-items: center; 
             background: #1F1C1C; padding: 15px 0; 
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
-        .header-top h1 { font-family: 'Anton', sans-serif; font-size: 1.5rem; letter-spacing: 2px; color: #E25402; }
+        .header-top { display: flex; align-items: center; justify-content: center; width: 100%; padding: 10px; }
+        .header-top h1 { font-family: 'Anton', sans-serif; font-size: 1.5rem; letter-spacing: 2px; color: #E25402; margin: 0; }
         .header-top h1 span { color: #fff; }
         .header-top-line { width: 150px; height: 2px; background: #FBBDA1; margin: 5px auto; }
         
@@ -50,23 +54,55 @@
             flex-direction: column;
             align-items: center;
             text-align: center;
-            gap: 1.5rem;
         }
         .main-content h2 {
             font-size: 1.8rem;
             color: #FBBDA1;
             margin-bottom: 1rem;
         }
+
+        /* --- ESTILOS DAS ABAS --- */
+        .tabs-container {
+            display: flex;
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #333;
+        }
+        .tab-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            color: #ccc;
+            padding: 15px 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: "Funnel Sans", sans-serif;
+            font-weight: bold;
+        }
+        .tab-btn.active {
+            color: #FBBDA1;
+            border-bottom: 3px solid #E25402;
+        }
+        .tab-btn:hover:not(.active) {
+            color: #fff;
+            background-color: rgba(255, 255, 255, 0.05);
+        }
         
         /* cards de leitura */
-        .reading-plan-list {
-            display: flex;
+        .reading-list-container {
+            display: none; /* Escondido por padrão */
             flex-direction: column;
             align-items: center;
             gap: 1rem;
             width: 100%;
             max-width: 600px;
         }
+        .reading-list-container.active {
+            display: flex; /* Mostra apenas a lista ativa */
+        }
+
         .reading-plan-card {
             background: #000000; 
             border-radius: 12px; 
@@ -75,7 +111,14 @@
             position: relative; 
             width: 100%;
             text-align: left;
+            animation: fadeIn 0.3s ease-in-out;
         }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .reading-plan-card .date {
             font-size: 0.9rem;
             font-weight: bold;
@@ -104,101 +147,103 @@
         .read-button {
             background-color: #1F1C1C;
             color: #fff;
-            border: none;
-            padding: 10px 15px;
+            border: 1px solid #333;
+            padding: 12px 15px;
             border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
             margin-top: 15px;
-            transition: background-color 0.3s ease, opacity 0.3s ease;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
             width: 100%;
+            font-size: 1rem;
         }
         .read-button:hover {
-            background-color: #646464;
+            background-color: #E25402;
+            border-color: #E25402;
         }
-        .read-button:disabled {
-            background-color: #888;
-            cursor: not-allowed;
+
+        /* Estilo do botão quando está na aba de terminados */
+        .read-button.completed {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+        .read-button.completed:hover {
+            background-color: #dc3545;
+            border-color: #dc3545;
+            color: #fff;
+        }
+
+        .loading-message, .empty-message {
+            color: #ccc;
+            padding: 20px;
+            text-align: center;
+            width: 100%;
         }
         
-          .container-menun-inferior {
-                position: fixed;
-                bottom: 0;
-                width: 100%;
-                background-color: transparent;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                padding: 10px 0;
-                z-index: 10;
-            }
+        /* Estilos do rodapé */
+        .container-menun-inferior {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: transparent;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px 0;
+            z-index: 10;
+        }
 
-            .container-footer {
-                display: flex;
-                justify-content: space-around;
-                background-color: rgba(0, 0, 0, 0.9);
-                padding: 10px 0;
-                position: fixed;
-                border-radius: 15px;
-                bottom: 52px;
-                width: 85%;
-                z-index: 10;
-                box-shadow:  rgba(255, 255, 255, 0.3) 0px 4px 15px;
-            }
-            .container-footer a {
-                color: white;
-                font-size: 1.5rem;
-                padding: 10px;
-            }
-            .container-footer i {
-                color: #FBBDA1;
-                font-size: 1.5rem;
-            }
+        .container-footer {
+            display: flex;
+            justify-content: space-around;
+            background-color: rgba(0, 0, 0, 0.9);
+            padding: 10px 0;
+            position: fixed;
+            border-radius: 50px;
+            bottom: 52px;
+            width: 85%;
+            z-index: 10;
+            box-shadow:  rgba(255, 255, 255, 0.3) 0px 4px 15px;
+        }
+        .container-footer a {
+            color: white;
+            font-size: 1.5rem;
+            padding: 10px;
+        }
+        .container-footer i {
+            color: #FBBDA1;
+            font-size: 1.5rem;
+        }
         
         /* menu lateral */
         .menu-oculto { 
             position: fixed; top: 0; right: -100%; width: 250px; height: 100%; 
             background: #000000; transition: right .5s ease-in-out; z-index: 999; 
             display: flex; flex-direction: column; justify-content: space-between;
+            padding-top: 50px;
             padding-bottom: 20px;
+            overflow-y: auto;
         }
         .menu-oculto.active { right: 0; }
-        .menu-oculto > div:first-child { flex-grow: 1; display: flex; flex-direction: column; }
         .btn-fecharOculto { 
-            font-size: 2rem; color: #fff; text-align: right; padding: 10px 20px; cursor: pointer;
+            position: absolute; top: 10px; right: 15px; font-size: 1.5rem; color: #fff; cursor: pointer;
         }
-        .menu-opcoes { margin-top: 10px; flex-grow: 1; }
         .menu-opcoes-barra { 
-            padding: 10px 20px;
+            padding: 15px 20px;
             color: #fff;
-            font-size: 1.1rem; 
             display: flex;
             align-items: center;
-            gap: 10px;
-            transition: background-color 0.3s ease;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
         .menu-opcoes-barra:hover { background-color: rgba(255, 255, 255, 0.1); }
-        .menu-opcoes-barra i { color: #FBBDA1; }
+        .menu-opcoes-barra a { text-decoration: none; color: white; width: 100%; }
+        .menu-opcoes-barra i { margin-right: 10px; color: #FBBDA1; }
         
-        .menu-footer {
-            display: flex; flex-direction: column; gap: 15px; padding: 10px 20px;
-        }
-        .perfil-image { 
-            display: flex; align-items: center; gap: 10px; 
-            padding: 10px 0; border-top: 1px solid rgba(255,255,255,0.2); 
-        }
-        .perfil-image img { 
-            width: 50px; 
-            height: 50px; 
-            border-radius: 50%; 
-            border: 2px solid #fff; 
-        }
+        .menu-footer { padding: 15px; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+        .perfil-image { display: flex; align-items: center; margin-bottom: 15px; }
+        .perfil-image img { width: 50px; height: 50px; border-radius: 50%; border: 2px solid #fff; margin-right: 10px; object-fit: cover; }
         .user-names { display: flex; flex-direction: column; }
-        #menu-user-name { 
-            font-weight: bold; 
-            color: #ffffff; 
-        }
+        #menu-user-name { font-weight: bold; color: #ffffff; }
         #menu-user-surname { font-size: 0.8em; opacity: 0.8; }
     </style>
 </head>
@@ -206,15 +251,25 @@
     <div id="app-container">
         <header class="container-header">
             <div class="header-top">
-                <img src="./img/logo.png" alt="">
+                <img src="./img/logo.png" alt="Logo OBPC">
             </div>
             <div class="header-top-line"></div>
         </header>
 
         <div class="main-content">
             <h2>Plano de Leitura Diária</h2>
-            <div id="reading-plan-list" class="reading-plan-list">
-                <p>Carregando plano de leitura...</p>
+            
+            <div class="tabs-container">
+                <button class="tab-btn active" data-target="reading-pending-list">Leitura</button>
+                <button class="tab-btn" data-target="reading-completed-list">Terminados</button>
+            </div>
+
+            <div id="reading-pending-list" class="reading-list-container active">
+                <div class="loading-message">Carregando plano de leitura...</div>
+            </div>
+
+            <div id="reading-completed-list" class="reading-list-container">
+                <div class="loading-message">Carregando plano de leitura...</div>
             </div>
         </div>
 
@@ -224,7 +279,7 @@
                     <a href="index.html" id="home-link"><i class="fa-solid fa-house"></i></a>
                 </div>
                 <div class="oferta">
-                    <a href="generoso.html" ><i class="fa-solid fa-heart"></i></i></a>
+                    <a href="generoso.html" ><i class="fa-solid fa-heart"></i></a>
                 </div>
                 <div class="datas">
                     <a href="events.html"><i class="fa-solid fa-calendar-day"></i></a>
@@ -240,12 +295,13 @@
         <div>
             <div class="btn-fecharOculto" id="btn-fechar-menu">x</div>
            <div class="menu-opcoes">
-                    <div class="menu-opcoes-barra"><a href="biblia.html"><i class="fa-solid fa-book-bible"></i> Bíblia </a></div>
-                    <div class="menu-opcoes-barra"><a href="notes.html"><i class="fa-solid fa-note-sticky"></i> Anotações</a></div>
-                    <div class="menu-opcoes-barra"><a href="leitura-diaria.html"><i class="fa-regular fa-calendar-check"></i> Leitura Diaria</a></div>
-                    <div class="menu-opcoes-barra"><a href="oracao.html"><i class="fa-solid fa-hands-praying"></i> Oração</a></div>
-                    <div class="menu-opcoes-barra"><a href="videos.html"><i class="fa-solid fa-circle-play"></i> Videos</a></div>
-                    <div class="menu-opcoes-barra"><a href="departamentos.html"><i class="fa-solid fa-id-card-clip"></i> Departamentos</a></div>
+                <div class="menu-opcoes-barra"><a href="biblia.html"><i class="fa-solid fa-book-bible"></i> Bíblia </a></div>
+                <div class="menu-opcoes-barra"><a href="index.html"><i class="fa-solid fa-bell"></i> Notificações</a></div>
+                <div class="menu-opcoes-barra"><a href="notes.html"><i class="fa-solid fa-note-sticky"></i> Anotações</a></div>
+                <div class="menu-opcoes-barra"><a href="leitura-diaria.html"><i class="fa-regular fa-calendar-check"></i> Leitura Diaria</a></div>
+                <div class="menu-opcoes-barra"><a href="oracao.html"><i class="fa-solid fa-hands-praying"></i> Oração</a></div>
+                <div class="menu-opcoes-barra"><a href="videos.html"><i class="fa-solid fa-circle-play"></i> Videos</a></div>
+                <div class="menu-opcoes-barra"><a href="departamentos.html"><i class="fa-solid fa-id-card-clip"></i> Departamentos</a></div>
             </div>
         </div>
         <div class="menu-footer">
@@ -256,47 +312,65 @@
                     <span id="menu-user-surname"></span>
                 </div>
             </div>
-            <div class="menu-opcoes-barra" id="logout-button"><i class="fa-solid fa-right-from-bracket"></i> Sair</div>
+            <div class="menu-opcoes-barra" id="logout-button" style="cursor:pointer;"><i class="fa-solid fa-right-from-bracket"></i> Sair</div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { 
-            getAuth, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence 
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { 
-            getFirestore, collection, onSnapshot, query, orderBy, doc, getDoc, setDoc
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, query, orderBy, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // 🔥 Configuração Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyArteycUkaN5-dClQ28oHSl-NoiL-s4NaY",
-            authDomain: "app-obpc-49823.firebaseapp.com",
-            projectId: "app-obpc-49823",
-            storageBucket: "app-obpc-49823.firebasestorage.app",
-            messagingSenderId: "690083146419",
-            appId: "1:690083146419:web:c03301f1aca7dd2d299ec6",
-            measurementId: "G-KJPSSSC575"
-        };
+        let firebaseConfig;
+        let appId = "default-app-id";
+
+        if (typeof __firebase_config !== 'undefined' && typeof __app_id !== 'undefined') {
+            firebaseConfig = JSON.parse(__firebase_config);
+            appId = __app_id;
+        } else {
+            firebaseConfig = {
+                apiKey: "AIzaSyArteycUkaN5-dClQ28oHSl-NoiL-s4NaY",
+                authDomain: "app-obpc-49823.firebaseapp.com",
+                projectId: "app-obpc-49823",
+                storageBucket: "app-obpc-49823.firebasestorage.app",
+                messagingSenderId: "690083146419",
+                appId: "1:690083146419:web:c03301f1aca7dd2d299ec6",
+                measurementId: "G-KJPSSSC575"
+            };
+        }
+        
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const appId = "default-app-id";
 
         setPersistence(auth, browserLocalPersistence);
 
-        const readingPlanList = document.getElementById('reading-plan-list');
+        // Elementos do DOM
+        const pendingList = document.getElementById('reading-pending-list');
+        const completedList = document.getElementById('reading-completed-list');
         const menuUserName = document.getElementById('menu-user-name');
         const menuUserSurname = document.getElementById('menu-user-surname');
         const menuProfileImg = document.getElementById('menu-profile-img');
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const listContainers = document.querySelectorAll('.reading-list-container');
+
+        // Lógica de troca de abas
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove classe active de todos os botões e listas
+                tabBtns.forEach(b => b.classList.remove('active'));
+                listContainers.forEach(l => l.classList.remove('active'));
+
+                // Adiciona classe active no botão clicado e na lista correspondente
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.target).classList.add('active');
+            });
+        });
 
         // Função para buscar ou criar o documento de perfil do usuário no Firestore
         const fetchOrCreateUserProfile = async (user, appId) => {
-            if (!user) {
-                console.log("Usuário não fornecido para fetchOrCreateUserProfile.");
-                return;
-            }
+            if (!user) return;
             try {
                 const userRef = doc(db, `artifacts/${appId}/users/${user.uid}/profile/profile_data`);
                 const docSnap = await getDoc(userRef);
@@ -308,118 +382,158 @@
                     menuUserSurname.textContent = '';
                     menuProfileImg.src = profileData.profileImageUrl || 'https://placehold.co/50x50/E25402/FFFFFF';
                 } else {
-                    console.log("Nenhum documento de perfil encontrado. Criando um novo...");
-                    
                     const defaultProfile = {
                         firstName: user.displayName ? user.displayName.split(' ')[0] : 'Usuário',
                         lastName: user.displayName ? user.displayName.split(' ').slice(1).join(' ') : '',
                         profileImageUrl: user.photoURL || 'https://placehold.co/50x50/E25402/FFFFFF'
                     };
-
-                    await setDoc(userRef, defaultProfile);
-                    
+                    await setDoc(userRef, defaultProfile, { merge: true });
                     menuUserName.textContent = defaultProfile.firstName;
                     menuUserSurname.textContent = defaultProfile.lastName;
                     menuProfileImg.src = defaultProfile.profileImageUrl;
                 }
             } catch (error) {
-                console.error("Erro ao buscar ou criar dados do perfil:", error);
+                console.error("Erro ao buscar dados do perfil:", error);
                 menuUserName.textContent = 'Usuário';
-                menuUserSurname.textContent = '';
                 menuProfileImg.src = 'https://placehold.co/50x50/E25402/FFFFFF';
             }
         };
 
-        // Função para buscar e renderizar o plano de leitura, incluindo o status de leitura do usuário
+        // Função para verificar se a lista está vazia e exibir mensagem
+        const checkEmptyLists = () => {
+            if (pendingList.children.length === 0) {
+                pendingList.innerHTML = '<div class="empty-message">Nenhuma leitura pendente. Parabéns! 🎉</div>';
+            }
+            if (completedList.children.length === 0) {
+                completedList.innerHTML = '<div class="empty-message">Nenhuma leitura terminada ainda.</div>';
+            }
+        };
+
+        // Função para buscar e renderizar o plano de leitura
         const fetchAndRenderReadingPlan = (user) => {
             if (!user) {
-                console.error("Objeto do usuário não disponível. Não é possível carregar o plano de leitura.");
-                readingPlanList.innerHTML = '<p>Erro: Usuário não autenticado.</p>';
+                pendingList.innerHTML = '<p class="error-message">Erro: Usuário não autenticado.</p>';
+                completedList.innerHTML = '';
                 return;
             }
 
             const readingPlansRef = collection(db, `artifacts/${appId}/public/data/readingPlans`);
-            // MUDANÇA 1: Aqui trocamos de 'desc' para 'asc' para listar do menor para o maior
             const q = query(readingPlansRef, orderBy("date", "asc"));
             
             onSnapshot(q, async (snapshot) => {
-                readingPlanList.innerHTML = '';
+                pendingList.innerHTML = '';
+                completedList.innerHTML = '';
+                
                 if (snapshot.empty) {
-                    readingPlanList.innerHTML = '<p>Nenhum plano de leitura encontrado.</p>';
-                } else {
-                    const userReadingsRef = doc(db, `artifacts/${appId}/users/${user.uid}/readings/plan_progress`);
-                    const userReadingsSnap = await getDoc(userReadingsRef);
-                    const userReadings = userReadingsSnap.exists() ? userReadingsSnap.data() : {};
+                    pendingList.innerHTML = '<div class="empty-message">Nenhum plano de leitura encontrado no sistema.</div>';
+                    completedList.innerHTML = '<div class="empty-message">Nenhum plano de leitura encontrado no sistema.</div>';
+                    return;
+                } 
 
-                    snapshot.forEach((docSnap) => {
-                        const plan = docSnap.data();
-                        const isRead = userReadings[docSnap.id] === true;
-                        const buttonText = isRead ? 'Lido ✅' : 'Marcar como Lido';
+                const userReadingsRef = doc(db, `artifacts/${appId}/users/${user.uid}/readings/plan_progress`);
+                const userReadingsSnap = await getDoc(userReadingsRef);
+                const userReadings = userReadingsSnap.exists() ? userReadingsSnap.data() : {};
 
-                        // MUDANÇA 2: Tratamento para formatar a data
-                        let dataFormatada = plan.date;
-                        if (plan.date) {
-                            const [ano, mes, dia] = plan.date.split('-');
-                            const dataObj = new Date(ano, mes - 1, dia);
-                            dataFormatada = dataObj.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long' });
-                        }
+                snapshot.forEach((docSnap) => {
+                    const plan = docSnap.data();
+                    const isRead = userReadings[docSnap.id] === true;
 
-                        // MUDANÇA 3: Substituição do ${plan.date} pelo ${dataFormatada}
-                        const planHtml = `
-                            <div class="reading-plan-card" data-doc-id="${docSnap.id}">
-                                <p class="date">${dataFormatada}</p>
-                                <p class="title">${plan.title}</p>
-                                <p class="verse">${plan.verse}</p>
-                                <p class="text">${plan.text}</p>
-                                <button class="read-button">${buttonText}</button>
-                            </div>
-                        `;
-                        readingPlanList.insertAdjacentHTML('beforeend', planHtml);
-                    });
+                    // Tratamento para formatar a data
+                    let dataFormatada = plan.date;
+                    if (plan.date) {
+                        const [ano, mes, dia] = plan.date.split('-');
+                        const dataObj = new Date(ano, mes - 1, dia);
+                        dataFormatada = dataObj.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long' });
+                    }
 
-                    // Adiciona o evento de clique aos botões recém-criados
-                    document.querySelectorAll('.read-button').forEach(button => {
-                        button.addEventListener('click', async (event) => {
-                            const card = event.target.closest('.reading-plan-card');
-                            const docId = card.dataset.docId;
+                    // Criação do card
+                    const card = document.createElement('div');
+                    card.className = 'reading-plan-card';
+                    card.dataset.docId = docSnap.id;
+                    
+                    const btnClass = isRead ? 'read-button completed' : 'read-button';
+                    const btnText = isRead ? '<i class="fa-solid fa-check-double"></i> Concluído (Desfazer)' : 'Marcar como Lido';
+
+                    card.innerHTML = `
+                        <p class="date">${dataFormatada}</p>
+                        <p class="title">${plan.title}</p>
+                        <p class="verse">${plan.verse}</p>
+                        <p class="text">${plan.text}</p>
+                        <button class="${btnClass}">${btnText}</button>
+                    `;
+
+                    // Lógica de Clique no Botão
+                    const button = card.querySelector('.read-button');
+                    button.addEventListener('click', async () => {
+                        const docId = card.dataset.docId;
+                        
+                        // Busca o status mais atualizado direto do banco
+                        const currentSnap = await getDoc(userReadingsRef);
+                        const currentData = currentSnap.exists() ? currentSnap.data() : {};
+                        const currentlyRead = currentData[docId] === true;
+
+                        const newState = !currentlyRead;
+                        
+                        try {
+                            button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Atualizando...';
                             
-                            const userReadingsRef = doc(db, `artifacts/${appId}/users/${user.uid}/readings/plan_progress`);
-                            const userReadingsSnap = await getDoc(userReadingsRef);
-                            const userReadingsData = userReadingsSnap.exists() ? userReadingsSnap.data() : {};
-                            const isCurrentlyRead = userReadingsData[docId] === true;
-
-                            const newState = !isCurrentlyRead;
+                            // Salva no banco de dados
+                            await setDoc(userReadingsRef, { [docId]: newState }, { merge: true });
                             
-                            try {
-                                await setDoc(userReadingsRef, { [docId]: newState }, { merge: true });
-                                event.target.textContent = newState ? 'Lido ✅' : 'Marcar como Lido';
-                                console.log(`Leitura ${docId} atualizada para ${newState}`);
-                            } catch (error) {
-                                console.error("Erro ao atualizar o status de leitura:", error);
-                                alert("Erro ao atualizar o status de leitura. Tente novamente.");
+                            // Move o card visualmente e atualiza o estilo
+                            if (newState) {
+                                // Foi marcado como lido
+                                button.className = 'read-button completed';
+                                button.innerHTML = '<i class="fa-solid fa-check-double"></i> Concluído (Desfazer)';
+                                completedList.appendChild(card);
+                            } else {
+                                // Foi desmarcado
+                                button.className = 'read-button';
+                                button.textContent = 'Marcar como Lido';
+                                pendingList.appendChild(card);
                             }
-                        });
+                            
+                            // Remove mensagens de vazio se houver e verifica as listas
+                            document.querySelectorAll('.empty-message').forEach(el => el.remove());
+                            checkEmptyLists();
+
+                        } catch (error) {
+                            console.error("Erro ao atualizar o status de leitura:", error);
+                            alert("Erro ao atualizar. Verifique sua conexão e tente novamente.");
+                            // Restaura o botão em caso de erro
+                            button.className = btnClass;
+                            button.innerHTML = btnText;
+                        }
                     });
-                }
+
+                    // Insere na lista correta (Leitura ou Terminados)
+                    if (isRead) {
+                        completedList.appendChild(card);
+                    } else {
+                        pendingList.appendChild(card);
+                    }
+                });
+
+                // Verifica se alguma das listas ficou vazia após o carregamento inicial
+                checkEmptyLists();
+                
             }, (error) => {
                 console.error("Erro ao carregar o plano de leitura: ", error);
-                readingPlanList.innerHTML = '<p>Erro ao carregar o plano de leitura.</p>';
+                pendingList.innerHTML = '<p class="error-message">Erro ao carregar o plano de leitura.</p>';
             });
         };
 
         // Observa o estado da autenticação do usuário
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                // Usuário logado, busca perfil e plano de leitura
                 await fetchOrCreateUserProfile(user, appId);
                 fetchAndRenderReadingPlan(user);
             } else {
-                // Nenhum usuário logado, redireciona para a página de login
                 window.location.href = "index.html";
             }
         });
 
-        // Event Listeners da UI
+        // Event Listeners da UI (Menu e Logout)
         document.getElementById("logout-button").addEventListener("click", () => {
             signOut(auth).then(() => {
                 window.location.href = "index.html";

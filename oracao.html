@@ -149,34 +149,32 @@
     position: fixed; top: 0; right: -100%; width: 250px; height: 100%; 
     background: #000000; transition: right .5s ease-in-out; z-index: 999; 
     display: flex; flex-direction: column; justify-content: space-between;
+    padding-top: 50px;
     padding-bottom: 20px;
+    overflow-y: auto;
   }
   .menu-oculto.active { right: 0; }
-  .menu-oculto > div:first-child { flex-grow: 1; display: flex; flex-direction: column; }
   .btn-fecharOculto { 
-    font-size: 2rem; color: #fff; text-align: right; padding: 10px 20px; cursor: pointer;
+    position: absolute; top: 10px; right: 15px; font-size: 1.5rem; color: #fff; cursor: pointer;
   }
-  .menu-opcoes { margin-top: 10px; flex-grow: 1; }
   .menu-opcoes-barra { 
-      padding: 10px 20px;
+      padding: 15px 20px;
       color: #fff;
-      font-size: 1.1rem;
-      cursor: pointer;
       display: flex;
-      align-items:
-      center; gap: 10px;
-      transition: background-color 0.3s ease;
+      align-items: center;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
   .menu-opcoes-barra:hover { background-color: rgba(255, 255, 255, 0.1); }
-  .menu-opcoes-barra i { color: #FBBDA1; }
+  .menu-opcoes-barra a { text-decoration: none; color: white; width: 100%; }
+  .menu-opcoes-barra i { margin-right: 10px; color: #FBBDA1; }
   
   .menu-footer {
     display: flex; flex-direction: column; gap: 15px; padding: 10px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
   }
   .perfil-image { 
     display: flex; align-items: center; gap: 10px; 
-    padding: 10px 0; border-top: 1px solid rgba(255,255,255,0.2); 
+    padding: 10px 0; 
   }
   /* Estilo da imagem de perfil ajustado */
   .perfil-image img { 
@@ -184,6 +182,7 @@
     height: 50px; 
     border-radius: 50%; 
     border: 2px solid #fff; 
+    object-fit: cover;
   }
   .user-names { display: flex; flex-direction: column; }
   #menu-user-name { 
@@ -317,7 +316,7 @@
                         <a href="index.html" id="home-link"><i class="fa-solid fa-house"></i></a>
                     </div>
                     <div class="oferta">
-                        <a href="generoso.html" ><i class="fa-solid fa-heart"></i></i></a>
+                        <a href="generoso.html" ><i class="fa-solid fa-heart"></i></a>
                     </div>
                     <div class="datas">
                         <a href="events.html"><i class="fa-solid fa-calendar-day"></i></a>
@@ -334,6 +333,7 @@
       <div class="btn-fecharOculto" id="btn-fechar-menu">x</div>
       <div class="menu-opcoes">
                     <div class="menu-opcoes-barra"><a href="biblia.html"><i class="fa-solid fa-book-bible"></i> Bíblia </a></div>
+                    <div class="menu-opcoes-barra"><a href="index.html"><i class="fa-solid fa-bell"></i> Notificações</a></div>
                     <div class="menu-opcoes-barra"><a href="notes.html"><i class="fa-solid fa-note-sticky"></i> Anotações</a></div>
                     <div class="menu-opcoes-barra"><a href="leitura-diaria.html"><i class="fa-regular fa-calendar-check"></i> Leitura Diaria</a></div>
                     <div class="menu-opcoes-barra"><a href="oracao.html"><i class="fa-solid fa-hands-praying"></i> Oração</a></div>
@@ -349,7 +349,7 @@
           <span id="menu-user-surname"></span>
         </div>
       </div>
-      <div class="menu-opcoes-barra" id="logout-button"><i class="fa-solid fa-right-from-bracket"></i> Sair</div>
+      <div class="menu-opcoes-barra" id="logout-button" style="cursor: pointer;"><i class="fa-solid fa-right-from-bracket"></i> Sair</div>
     </div>
   </div>
 

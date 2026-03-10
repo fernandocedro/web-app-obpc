@@ -70,11 +70,62 @@
     padding: 1rem;
     padding-bottom: 80px; 
     overflow-y: auto; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .main-content h2 {
+      color: #FBBDA1;
+      margin-bottom: 15px;
+      text-align: center;
+  }
+
+  /* BARRA DE BUSCA */
+  .search-container {
+      display: flex;
+      width: 100%;
+      max-width: 600px;
+      margin-bottom: 20px;
+      gap: 10px;
+  }
+
+  .search-container input {
+      flex-grow: 1;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #FBBDA1;
+      background-color: #333;
+      color: white;
+      font-size: 1rem;
+      font-family: "Funnel Sans", sans-serif;
+  }
+
+  .search-container input:focus {
+      outline: none;
+      box-shadow: 0 0 5px rgba(251, 189, 161, 0.5);
+  }
+
+  .search-container button {
+      background-color: #E25402;
+      color: white;
+      border: none;
+      padding: 0 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: background-color 0.3s ease;
+  }
+
+  .search-container button:hover {
+      background-color: #d14a02;
   }
 
   /* cards de anotações */
   .notes-list {
     display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(150px,1fr));
+    width: 100%;
+    max-width: 600px;
   }
   .note-card {
     background: #000000; border-radius: 12px; padding: 1rem;
@@ -254,10 +305,18 @@
     padding: 10px;
     margin-bottom: 1rem; 
     background: #1e1e1e; 
-    border: 1px solid #E25402; 
+    border: 1px solid #FBBDA1; 
     color: #fff; 
     border-radius: 5px;
+    font-family: "Funnel Sans", sans-serif;
   }
+
+  /* CAIXA DE TEXTO MAIOR */
+  #note-content {
+      min-height: 250px;
+      resize: vertical;
+  }
+
   .modal-actions { display: flex; justify-content: flex-end; gap: 1rem; }
   .modal-actions button {
     padding: 8px 15px;
@@ -267,7 +326,8 @@
     font-weight: bold;
   }
   .modal-actions .cancel-btn { background-color: #555; color: #fff; }
-  .modal-actions .save-btn { background-color: #E25402; color: #fff; }
+  .modal-actions .save-btn { background-color: #FBBDA1; color: #000; }
+  .modal-actions .close-btn { background-color: #FBBDA1; color: #000; }
 
   /* Botão de Ação Flutuante (FAB) */
   .fab {
@@ -291,7 +351,7 @@
   .fab:hover {
       transform: scale(1.1);
   }
-</style>
+  </style>
 </head>
 <body>
   <div id="app-container">
@@ -304,6 +364,12 @@
 
     <div class="main-content">
       <h2>Anotações</h2>
+
+      <div class="search-container">
+          <input type="text" id="search-note-input" placeholder="Buscar anotações...">
+          <button id="search-note-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+      </div>
+
       <div id="notes-list" class="notes-list">
         <div class="loading-message">Carregando anotações...</div>
       </div>
@@ -315,7 +381,7 @@
                     <a href="index.html" id="home-link"><i class="fa-solid fa-house"></i></a>
                 </div>
                 <div class="oferta">
-                    <a href="generoso.html" ><i class="fa-solid fa-heart"></i></i></a>
+                    <a href="generoso.html" ><i class="fa-solid fa-heart"></i></a>
                 </div>
                 <div class="datas">
                     <a href="events.html"><i class="fa-solid fa-calendar-day"></i></a>
@@ -332,12 +398,14 @@
       <div class="btn-fecharOculto" id="btn-fechar-menu">x</div>
       <div class="menu-opcoes">
           <div class="menu-opcoes-barra"><a href="biblia.html"><i class="fa-solid fa-book-bible"></i> Bíblia </a></div>
+          <div class="menu-opcoes-barra"><a href="index.html"><i class="fa-solid fa-bell"></i> Notificações</a></div>
           <div class="menu-opcoes-barra"><a href="notes.html"><i class="fa-solid fa-note-sticky"></i> Anotações</a></div>
           <div class="menu-opcoes-barra"><a href="leitura-diaria.html"><i class="fa-regular fa-calendar-check"></i> Leitura Diaria</a></div>
           <div class="menu-opcoes-barra"><a href="oracao.html"><i class="fa-solid fa-hands-praying"></i> Oração</a></div>
           <div class="menu-opcoes-barra"><a href="videos.html"><i class="fa-solid fa-circle-play"></i> Videos</a></div>
           <div class="menu-opcoes-barra"><a href="departamentos.html"><i class="fa-solid fa-id-card-clip"></i> Departamentos</a></div>
       </div>
+    </div>
     <div class="menu-footer">
       <div class="perfil-image">
         <img id="menu-profile-img" src="https://placehold.co/50x50/E25402/FFFFFF" alt="Perfil">
@@ -415,8 +483,48 @@
     const menuUserSurname = document.getElementById('menu-user-surname');
     const menuProfileImg = document.getElementById('menu-profile-img');
 
+    // Elementos de Busca
+    const searchNoteInput = document.getElementById("search-note-input");
+    const searchNoteBtn = document.getElementById("search-note-btn");
+
     let currentUser = null;
     let editingNoteId = null;
+
+    // Função de Filtro/Busca
+    function filterNotes() {
+        const term = searchNoteInput.value.toLowerCase().trim();
+        const cards = document.querySelectorAll('.note-card');
+        
+        let hasVisibleNotes = false;
+
+        cards.forEach(card => {
+            const title = card.dataset.title.toLowerCase();
+            const content = card.dataset.content.toLowerCase();
+            
+            if (title.includes(term) || content.includes(term)) {
+                card.style.display = "block";
+                hasVisibleNotes = true;
+            } else {
+                card.style.display = "none";
+            }
+        });
+
+        // Mostra aviso se nada for encontrado
+        const existingEmptyMsg = notesList.querySelector('.empty-message');
+        if (!hasVisibleNotes && cards.length > 0) {
+            if (!existingEmptyMsg) {
+                const msg = document.createElement('p');
+                msg.className = 'empty-message';
+                msg.textContent = 'Nenhuma anotação encontrada com este termo.';
+                notesList.appendChild(msg);
+            }
+        } else if (existingEmptyMsg) {
+            existingEmptyMsg.remove();
+        }
+    }
+
+    searchNoteInput.addEventListener('input', filterNotes);
+    searchNoteBtn.addEventListener('click', filterNotes);
 
     // Função para buscar ou criar o documento de perfil do usuário no Firestore
     const fetchOrCreateUserProfile = async (user, appId) => {
@@ -561,6 +669,9 @@
           `;
           notesList.appendChild(div);
         });
+
+        // Reaplica o filtro caso a pessoa receba uma atualização enquanto busca
+        filterNotes();
 
         document.querySelectorAll(".note-card").forEach(card => {
             card.addEventListener("click", (e) => {
