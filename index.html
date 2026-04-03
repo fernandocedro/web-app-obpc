@@ -1049,7 +1049,7 @@
         <script type="module">
             import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
             import { getAuth, onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, deleteUser } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-            import { getFirestore, collection, onSnapshot, query, doc, setDoc, getDoc, updateDoc, deleteDoc, orderBy, limit, arrayUnion } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+            import { getFirestore, collection, onSnapshot, query, doc, setDoc, getDoc, updateDoc, deleteDoc, orderBy, limit, arrayUnion, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
             import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
             
         window.addEventListener('DOMContentLoaded', () => {
@@ -1271,12 +1271,11 @@
             };
 
             // ==============================================
-            // LÓGICA DE NOTIFICAÇÕES
+            // LÓGICA DE NOTIFICAÇÕES (FILTRADA POR DEP)
             // ==============================================
             const renderNotifications = () => {
                 if (!notificationsListContainer) return;
 
-                // Checagem de segurança se os arrays estiverem indefinidos
                 const safeDeletedNotifs = userDeletedNotifs || [];
                 const safeReadNotifs = userReadNotifs || [];
 
@@ -1295,7 +1294,6 @@
                     card.className = `notification-card ${isRead ? 'read' : ''}`;
                     card.dataset.id = notif.id;
 
-                    // Tratamento seguro da data para evitar erros
                     let dateStr = 'Recentemente';
                     if (notif.createdAt && typeof notif.createdAt.toDate === 'function') {
                         dateStr = notif.createdAt.toDate().toLocaleString('pt-BR');
@@ -1368,11 +1366,32 @@
             };
 
             const fetchAndRenderNotifications = (appId) => {
-                if (!db) return;
-                const q = query(collection(db, `artifacts/${appId}/public/data/notifications`), orderBy("createdAt", "desc"));
+                if (!db || !currentUserProfile) return;
+
+                // 1. Prepara a lista de permissões do usuário
+                let targets = ['all']; // Sempre vê o geral
+
+                if (currentUserProfile.departmentRequests && Array.isArray(currentUserProfile.departmentRequests)) {
+                    const approvedDepts = currentUserProfile.departmentRequests
+                        .filter(req => req.status === 'approved')
+                        .map(req => req.departmentId);
+                    
+                    targets = [...targets, ...approvedDepts];
+                }
+
+                // 2. Cria a query filtrada
+                const q = query(
+                    collection(db, `artifacts/${appId}/public/data/notifications`), 
+                    where("target", "in", targets),
+                    where("status", "==", "sent"),
+                    orderBy("createdAt", "desc")
+                );
+
                 onSnapshot(q, (snapshot) => {
                     globalNotifications = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                     renderNotifications();
+                }, (error) => {
+                    console.error("Erro ao carregar notificações filtradas:", error);
                 });
             };
 
@@ -1417,7 +1436,9 @@
 
                     userReadNotifs = profileData.readNotifications || [];
                     userDeletedNotifs = profileData.deletedNotifications || [];
-                    renderNotifications(); 
+                    
+                    // CRÍTICO: Após carregar o perfil, carrega as notificações do dep dele
+                    fetchAndRenderNotifications(appId);
 
                     const hasApprovedDepts = profileData.departmentRequests && profileData.departmentRequests.some(d => d.status === 'approved');
                     memberCardIcon.style.display = hasApprovedDepts ? 'block' : 'none';
@@ -1812,7 +1833,7 @@
                             
                             fetchAndRenderMaterialApoio(appId);
                             fetchAndRenderOfertas(appId);
-                            fetchAndRenderNotifications(appId); 
+                            // fetchAndRenderNotifications(appId); // Removido daqui, agora é chamado pelo fetchUserProfile
                             fetchUserProfile();
                             
                         } else {
